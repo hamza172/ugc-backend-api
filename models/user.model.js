@@ -61,6 +61,9 @@ User.init(
     phoneNumber: {
       type: DataTypes.STRING,
     },
+    gender: {
+      type: DataTypes.STRING,
+    },
     bio: {
       type: DataTypes.STRING,
     },

@@ -12,6 +12,7 @@ const register = {
     postalCode: Joi.string(),
     city: Joi.string(),
     phoneNumber: Joi.string(),
+    gender: Joi.string(),
     slogan: Joi.string(),
     niches: Joi.string(),
     profilePicture: Joi.string(),
