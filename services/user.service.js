@@ -13,7 +13,12 @@ const { Op } = require("sequelize");
  * @returns {Promise<User>}
  */
 const createUser = async (userBody) => {
-  const user = await User.findOne({ where: { email: userBody.email } });
+  let user
+  if (userBody.role === 'company') {
+    user = await User.findOne({ where: { email: userBody.email, role: 'company' } });
+  } else {
+    user = await User.findOne({ where: { email: userBody.email, role: 'creator' } });
+  }
 
   if (user) {
     throw new ApiError(
