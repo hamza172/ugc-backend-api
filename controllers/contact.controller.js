@@ -28,7 +28,7 @@ exports.sendContactEmail = async (req, res) => {
 
     // Email options
     const mailOptions = {
-      from: '"Your Website Name" <no-reply@jan-hein.com>',
+      from: '"Your Website Name" <contact@ugc.nl>',
       to: "mail@jan-hein.com", // where to send the contact form emails
       subject: "[UGC.nl] Nieuw bericht",
       text: `Je hebt een bericht ontvangen van ${firstName} ${lastName} (${email}, ${phone}): ${message}`,
