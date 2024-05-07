@@ -15,30 +15,30 @@ exports.sendContactEmail = async (req, res) => {
   const { firstName, lastName, email, phone, message } = req.body;
 
   try {
-    // SMPT config
-    // const transporter = nodemailer.createTransport({
-    //   host: "smtp.example.com", // SMTP server
-    //   port: 587,
-    //   secure: false, // true for 465, false for other ports
-    //   auth: {
-    //     user: process.env.EMAIL_USERNAME, // SMTP username
-    //     pass: process.env.EMAIL_PASSWORD, // SMTP password
-    //   },
-    // });
+  // SMPT config
+  //   const transporter = nodemailer.createTransport({
+  //     host: "smtp.example.com", // SMTP server
+  //     port: 587,
+  //     secure: false, // true for 465, false for other ports
+  //     auth: {
+  //       user: process.env.EMAIL_USERNAME, // SMTP username
+  //       pass: process.env.EMAIL_PASSWORD, // SMTP password
+  //     },
+  //   });
 
     // Email options
     const mailOptions = {
-      from: '"Your Website Name" <contact@ugc.nl>',
-      to: "mail@jan-hein.com", // where to send the contact form emails
+      from: '"UGC.nl" <no-reply@ugc.nl>',
+      to: "contact@ugc.nl", // where to send the contact form emails
       subject: "[UGC.nl] Nieuw bericht",
       text: `Je hebt een bericht ontvangen van ${firstName} ${lastName} (${email}, ${phone}): ${message}`,
     };
 
     // Send the email
     await transporter.sendMail(mailOptions);
-    res.status(200).send({ message: "Contact form submitted successfully." });
+    res.status(200).send({ message: "Bedankt voor je bericht!" });
   } catch (error) {
     console.error("Error sending contact form email: ", error);
-    res.status(500).send({ message: "Failed to send contact form." });
+    res.status(500).send({ message: "Er ging iets mis, probeer het nog eens!" });
   }
 };
