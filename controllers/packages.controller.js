@@ -48,6 +48,11 @@ const deletePackage = catchAsync(async (req, res) => {
     .send({ code: httpStatus.OK, message: "Package was succesfully deleted" });
 });
 
+const getPackagesByUserId = catchAsync(async (req, res) => {
+  const result = await packageService.getPackagesByUser(req.params.userId);
+  res.send(result);
+});
+
 module.exports = {
   createPackage,
   getPackages,
@@ -55,4 +60,5 @@ module.exports = {
   updatePackage,
   updateMultiplePackages,
   deletePackage,
+  getPackagesByUserId
 };

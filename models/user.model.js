@@ -58,6 +58,9 @@ User.init(
     city: {
       type: DataTypes.STRING,
     },
+    country: {
+      type: DataTypes.STRING,
+    },
     phoneNumber: {
       type: DataTypes.STRING,
     },
@@ -99,12 +102,33 @@ User.init(
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
+    availability: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
     moneyBalance: {
       type: DataTypes.FLOAT,
     },
     stripeAccountId: {
       type: DataTypes.STRING(500),
     },
+    btwNumber: {
+      type: DataTypes.STRING,
+    },
+    accountNumber: {
+      type: DataTypes.STRING,
+    },
+    billingEmail: {
+      type: DataTypes.STRING,
+    },
+    isBusiness: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+    useAlternateEmail: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    }
   },
   {
     sequelize,

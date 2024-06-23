@@ -17,7 +17,11 @@ Message.init(
     },
     text: {
       type: DataTypes.STRING,
-      allowNull: false,
+      // allowNull: false,
+    },
+    attachment: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
     senderId: {
       type: DataTypes.INTEGER,

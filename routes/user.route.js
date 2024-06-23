@@ -3,6 +3,7 @@ const express = require("express");
 const userController = require("../controllers/user.controller");
 const userValidation = require("../validations/user.validation");
 const validate = require("../middlewares/validate");
+const upload = require("../utils/multer");
 
 const router = express.Router();
 
@@ -18,12 +19,19 @@ router
 router
   .route("/:userId")
   .get(
-    //auth("getUsers"),
+    auth(),
     validate(userValidation.getUser),
     userController.getUser
   )
   .patch(
-    //auth("editUsers"),
+    auth("updateRequests"),
+    upload.fields([
+      { name: "profilePicture" },
+      { name: "video1" },
+      { name: "video2" },
+      { name: "video3" },
+      { name: "video4" }]),
+
     validate(userValidation.updateUser),
     userController.updateUser
   )

@@ -14,10 +14,13 @@ const bcrypt = require("bcryptjs");
  */
 const loginUserWithEmailAndPassword = async (email, password) => {
   const user = await userService.getUserByEmail(email);
+  if (!user) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, "User doesnt Exist");
+  }
 
   const isPasswordMatch = await bcrypt.compare(
     password,
-    user.dataValues.password
+    user?.dataValues?.password
   );
 
   if (!user || !isPasswordMatch) {
@@ -67,9 +70,11 @@ const refreshAuth = async (refreshToken) => {
     if (!user) {
       throw new Error();
     }
-    await refreshTokenDoc.remove();
+    console.log("id:", refreshTokenDoc.id)
+    await Token.deleteOne({ id: refreshTokenDoc.id });
     return tokenService.generateAuthTokens(user);
   } catch (error) {
+    console.log("ERROR: ", error)
     throw new ApiError(httpStatus.UNAUTHORIZED, "Please authenticate");
   }
 };
@@ -122,10 +127,36 @@ const verifyEmail = async (verifyEmailToken) => {
   }
 };
 
+
+/**
+ * Change password
+ * @param {string} userId
+ * @param {string} oldPassword
+ * @param {string} newPassword
+ * @returns {Promise}
+ */
+const changePassword = async (userId, oldPassword, newPassword) => {
+  const user = await userService.getUserById(userId);
+  if (!user) {
+    throw new ApiError(httpStatus.NOT_FOUND, "User not found");
+  }
+
+  const isPasswordMatch = await bcrypt.compare(oldPassword, user.password);
+  if (!isPasswordMatch) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, "Old password is incorrect");
+  }
+
+  const hashedNewPassword = await bcrypt.hash(newPassword, 8);
+  await userService.updateUserById(user.id, { password: hashedNewPassword });
+};
+
+
+
 module.exports = {
   loginUserWithEmailAndPassword,
   logout,
   refreshAuth,
   resetPassword,
   verifyEmail,
+  changePassword,
 };

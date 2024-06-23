@@ -15,7 +15,7 @@ Offer.init(
     },
     durationPerVideo: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      // allowNull: false,
     },
     voiceOver: {
       type: DataTypes.BOOLEAN,
@@ -32,8 +32,14 @@ Offer.init(
     },
     expiryDate: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      // allowNull: false,
     },
+    description: {
+      type: DataTypes.STRING,
+    },
+    status: {
+      type: DataTypes.ENUM("Accepted", "Withdrawn","Pending"),
+    }
   },
 
   {

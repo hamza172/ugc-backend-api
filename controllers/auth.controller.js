@@ -131,6 +131,12 @@ const verifyEmail = catchAsync(async (req, res) => {
   res.json({ status: "success" });
 });
 
+const changePassword = catchAsync(async (req, res) => {
+  const { oldPassword, newPassword } = req.body;
+  await authService.changePassword(req.user.id, oldPassword, newPassword);
+  res.status(httpStatus.OK).send({ message: "Password changed successfully" });
+});
+
 module.exports = {
   register,
   login,
@@ -140,4 +146,5 @@ module.exports = {
   resetPassword,
   sendVerificationEmail,
   verifyEmail,
+  changePassword,
 };

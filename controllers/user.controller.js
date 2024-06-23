@@ -4,6 +4,7 @@ const ApiError = require("../utils/ApiError");
 const catchAsync = require("../utils/catchAsync");
 const { userService } = require("../services");
 const { Op } = require("sequelize");
+const Uploader = require("../utils/uploader");
 
 const createUser = catchAsync(async (req, res) => {
   const user = await userService.createUser(req.body);
@@ -37,7 +38,53 @@ const getUser = catchAsync(async (req, res) => {
 });
 
 const updateUser = catchAsync(async (req, res) => {
-  const user = await userService.updateUserById(req.params.userId, req.body);
+  let user
+  if (!(req.files && Object.keys(req.files).length >= 1)) {
+    user = await userService.updateUserById(req.params.userId, req.body);
+  } else {
+
+    const { profilePicture, video1, video2, video3, video4 } = req.files;
+    let profileLink = null;
+    if (profilePicture) {
+      profileLink = await Uploader({
+        location: "aws_s3",
+        file: profilePicture[0],
+        sizeLimit: true,
+      });
+    }
+
+    //2. Upload video content to user profile
+    let videoUrl1 = null;
+    let videoUrl2 = null;
+    let videoUrl3 = null;
+    let videoUrl4 = null;
+
+    if (video1) {
+      videoUrl1 = await Uploader({ location: "firebase", file: video1[0] });
+    }
+    if (video2) {
+      videoUrl2 = await Uploader({ location: "firebase", file: video2[0] });
+    }
+    if (video3) {
+      videoUrl3 = await Uploader({ location: "firebase", file: video3[0] });
+    }
+    if (video4) {
+      videoUrl4 = await Uploader({ location: "firebase", file: video4[0] });
+    }
+    //-----------------------------------------------------------------------------
+    const updatedUser = {
+      ...req.body,
+      profilePicture: profileLink,
+      video1: videoUrl1 ? videoUrl1 : null,
+      video2: videoUrl2 ? videoUrl2 : null,
+      video3: videoUrl3 ? videoUrl3 : null,
+      video4: videoUrl4 ? videoUrl4 : null,
+      // availability: req.body.availability === 'true' ? true : false
+    };
+    user = await userService.updateUserById(req.params.userId, updatedUser);
+    console.log("asd: ", req.params.userId, req.body)
+
+  }
   if (!user) {
     res.send({
       code: httpStatus.INTERNAL_SERVER_ERROR,

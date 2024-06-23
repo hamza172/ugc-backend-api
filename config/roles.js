@@ -12,8 +12,21 @@ const allRoles = {
     permissions.UPDATE_REQUESTS,
     permissions.DELETE_REQUESTS,
   ],
-  user: [permissions.CREATE_REQUESTS],
-  creator: [permissions.CREATE_REQUESTS],
+  user: [
+    permissions.CREATE_REQUESTS,
+    permissions.GET_REQUESTS,
+    permissions.UPDATE_REQUESTS,
+  ],
+  creator: [
+    permissions.CREATE_REQUESTS,
+    permissions.GET_REQUESTS,
+    permissions.UPDATE_REQUESTS,
+  ],
+  company: [
+    permissions.CREATE_REQUESTS,
+    permissions.GET_REQUESTS,
+    permissions.UPDATE_REQUESTS,
+  ],
 };
 
 const roles = Object.keys(allRoles);

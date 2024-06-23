@@ -65,4 +65,12 @@ router.post(
   authController.verifyEmail
 );
 
+
+router.post(
+  "/change-password",
+  auth(), 
+  validate(authValidation.changePassword), 
+  authController.changePassword 
+);
+
 module.exports = router;

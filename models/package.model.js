@@ -8,7 +8,7 @@ const Review = require("./review.model");
 const Offer = require("./offer.model");
 const { LineItem, Invoice } = require("./invoice.model");
 
-class Package extends Model {}
+class Package extends Model { }
 
 Package.init(
   {
@@ -58,6 +58,37 @@ Package.init(
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
+    script: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+    available: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+    videoEditing: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+    rawContent: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+    description: {
+      type: DataTypes.STRING,
+    },
+    name: {
+      type: DataTypes.STRING,
+    },
+    usageRights: {
+      type: DataTypes.STRING,
+    },
+    deliveryTime: {
+      type: DataTypes.STRING,
+    },
+    revisions: {
+      type: DataTypes.INTEGER,
+    },
     niche: {
       type: DataTypes.ENUM(
         "app",
@@ -72,8 +103,16 @@ Package.init(
         "huis&tuin",
         "overig"
       ),
-      allowNull: false,
+      allowNull: true,
     },
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: User,
+        key: 'id'
+      }
+    }
   },
   {
     sequelize,

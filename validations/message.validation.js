@@ -3,10 +3,10 @@ const { password, objectId } = require("./custom.validation");
 
 const createMessage = {
   body: Joi.object().keys({
-    text: Joi.string(),
+    text: Joi.string().allow(null),
     senderId: Joi.number().required(),
     chatId: Joi.number().required(),
-    offerId: Joi.number(),
+    offerId: Joi.number().allow(null),
   }),
 };
 

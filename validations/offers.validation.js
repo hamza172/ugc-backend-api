@@ -5,13 +5,15 @@ const createOffer = {
   body: Joi.object().keys({
     numberOfVideos: Joi.number().required(),
     totalCost: Joi.number().required(),
-    durationPerVideo: Joi.number().required(),
-    voiceOver: Joi.boolean(),
-    music: Joi.boolean(),
-    subtitle: Joi.boolean(),
+    durationPerVideo: Joi.number().allow(null),
+    voiceOver: Joi.boolean().allow(null),
+    music: Joi.boolean().allow(null),
+    subtitle: Joi.boolean().allow(null),
     deliveryTime: Joi.number().required(),
-    expiryDate: Joi.number().required(),
+    expiryDate: Joi.number().allow(null),
     chatId: Joi.number(),
+    description: Joi.string(),
+    status: Joi.string()
   }),
 };
 

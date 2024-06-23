@@ -24,6 +24,8 @@ const getOrders = {
     page: Joi.number().integer(),
     buyerId: Joi.number().integer(),
     creatorId: Joi.number().integer(),
+    userRole: Joi.string(),
+    userId: Joi.string(),
   }),
 };
 
