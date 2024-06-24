@@ -1,13 +1,15 @@
 const { DataTypes, Model } = require("sequelize");
 const sequelize = require("../config/sequelize");
+const Offer = require("./offer.model");
+const Package = require("./package.model");
 
-class Order extends Model {}
+class Order extends Model { }
 
 Order.init(
   {
     scriptFileUrl: {
       type: DataTypes.STRING,
-      allowNull: false,
+      // allowNull: false,
     },
     sceneLocation: {
       type: DataTypes.STRING,
@@ -20,7 +22,7 @@ Order.init(
     },
     paymentMethod: {
       type: DataTypes.STRING,
-      allowNull: false,
+      // allowNull: false,
     },
     creatorId: {
       type: DataTypes.INTEGER,
@@ -46,6 +48,14 @@ Order.init(
     uploadMessage: {
       type: DataTypes.STRING,
     },
+    briefing: {
+      type: DataTypes.STRING,
+    },
+    script: {
+      type: DataTypes.STRING,
+    },
+    
+    
   },
 
   {
@@ -53,5 +63,6 @@ Order.init(
     modelName: "order",
   }
 );
+
 
 module.exports = Order;

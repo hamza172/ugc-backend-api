@@ -28,6 +28,19 @@ const options = {
   apis: ["./routes/*.js"],
 };
 
+
+// const Activity = require("./services/activity.service");
+// const test = async () => {
+//   // return await Activity.create({
+//   //   "userId":78,
+//   //   "message":"testing",
+//   //   "orderId":3
+//   // });
+//   return await Activity.getActivityByOrderId(3).then(res=>console.log(res));
+// };
+
+// test()
+
 const swaggerSpec = swaggerJSDoc(options);
 
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));

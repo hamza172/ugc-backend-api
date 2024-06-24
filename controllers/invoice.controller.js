@@ -3,6 +3,7 @@ const pick = require("../utils/pick");
 const ApiError = require("../utils/ApiError");
 const catchAsync = require("../utils/catchAsync");
 const { Invoice, LineItem } = require("../models");
+const { invoiceService } = require("../services");
 
 const createInvoice = catchAsync(async (req, res) => {
   const invoiceData = req.body;
@@ -15,21 +16,28 @@ const createInvoice = catchAsync(async (req, res) => {
 });
 
 const getInvoices = catchAsync(async (req, res) => {
-  const filter = pick(req.query, ["invoiceNumber"]);
+  const filter = pick(req.query, ["invoiceNumber", "buyerId", "creatorId"]);
   const options = pick(req.query, ["sortBy", "limit", "page"]);
-
-  const invoices = await Invoice.findAll({
-    where: filter,
-    order: options.sortBy ? [options.sortBy.split(":")] : [],
-    include: [LineItem],
-    limit: options.limit ? parseInt(options.limit, 10) : undefined,
-    offset: options.page
-      ? (parseInt(options.page, 10) - 1) * (options.limit || 10)
-      : undefined,
-  });
-
+  const invoices = await invoiceService.queryInvoices(filter, options);
   res.send(invoices);
 });
+
+// const getUserInvoices = catchAsync(async (req, res) => {
+//   const filter = pick(req.query, ["invoiceNumber"]);
+//   const options = pick(req.query, ["sortBy", "limit", "page"]);
+
+//   const invoices = await Invoice.findAll({
+//     where: filter,
+//     order: options.sortBy ? [options.sortBy.split(":")] : [],
+//     include: [LineItem],
+//     limit: options.limit ? parseInt(options.limit, 10) : undefined,
+//     offset: options.page
+//       ? (parseInt(options.page, 10) - 1) * (options.limit || 10)
+//       : undefined,
+//   });
+
+//   res.send(invoices);
+// });
 
 const getInvoice = catchAsync(async (req, res) => {
   const { invoiceId } = req.params;

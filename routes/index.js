@@ -13,6 +13,7 @@ const onboardingRoutes = require("./onboarding.route");
 const invoicesRoutes = require("./invoice.route");
 const webhookRoutes = require("./webhook.route");
 const contactRoutes = require("./contact.route");
+const activityRoutes = require("./activity.route");
 
 const router = express.Router();
 
@@ -72,6 +73,10 @@ const defaultRoutes = [
   {
     path: "/contact",
     route: contactRoutes,
+  },
+  {
+    path: "/acitivity",
+    route: activityRoutes,
   },
 ];
 

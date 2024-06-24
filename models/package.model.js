@@ -6,6 +6,7 @@ const Chat = require("./chat.model");
 const Order = require("./order.model");
 const Review = require("./review.model");
 const Offer = require("./offer.model");
+const Activity = require("./activity.model");
 const { LineItem, Invoice } = require("./invoice.model");
 
 class Package extends Model { }
@@ -134,6 +135,7 @@ Chat.belongsTo(User, {
 });
 Message.belongsTo(Chat);
 Order.belongsTo(Package);
+Order.belongsTo(Offer);
 Review.belongsTo(User);
 Review.belongsTo(Order);
 User.hasMany(Review);
@@ -170,4 +172,9 @@ Invoice.belongsTo(User, {
 Invoice.belongsTo(Order);
 Order.hasOne(Invoice);
 
+Activity.belongsTo(User, { as: 'user', foreignKey: 'userId' });
+User.hasMany(Activity, { foreignKey: 'userId' });
+Order.hasMany(Activity, {
+  foreignKey: "orderId"
+});
 module.exports = Package;

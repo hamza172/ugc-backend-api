@@ -48,4 +48,5 @@ Offer.init(
   }
 );
 
+
 module.exports = Offer;

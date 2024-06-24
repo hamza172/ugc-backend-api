@@ -24,6 +24,10 @@ const getInvoices = {
     sortBy: Joi.string(),
     limit: Joi.number().integer(),
     page: Joi.number().integer(),
+    userRole: Joi.string(),
+    creatorId: Joi.number(),
+    buyerId: Joi.number(),
+
   }),
 };
 

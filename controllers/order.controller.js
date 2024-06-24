@@ -12,6 +12,9 @@ const {
   getDownloadURL,
   uploadBytesResumable,
 } = require("firebase/storage");
+const { LineItem } = require("../models");
+const { getOfferById } = require("../services/offers.service");
+const { createInvoice } = require("../services/invoice.service");
 
 const firebaseConfig = {
   apiKey: process.env.FIREBASE_API_KEY,
@@ -26,71 +29,115 @@ initializeApp(firebaseConfig);
 
 const storage = getStorage();
 
+// const createOrder = catchAsync(async (req, res) => {
+//   const { body, file } = req;
+
+//   const storageRef = ref(storage, `files/${file.originalname}`);
+
+//   const metadata = {
+//     contentType: file.mimetype,
+//   };
+
+//   const snapshot = await uploadBytesResumable(
+//     storageRef,
+//     file.buffer,
+//     metadata
+//   );
+
+//   const downloadURL = await getDownloadURL(snapshot.ref);
+
+//   const order = await orderService.createOrder({
+//     ...body,
+//     scriptFileUrl: downloadURL,
+//     buyerId: Number(body.buyerId),
+//     packageId: Number(body.packageId),
+//     creatorId: Number(body.creatorId),
+//     totalAmount: Number(body.totalAmount),
+//     fastDelivery1Day: Boolean(body.fastDelivery1Day),
+//     status: "open",
+//   });
+
+//   const user = await userService.getUserById(body.buyerId);
+//   const creator = await userService.getUserById(body.creatorId);
+
+//   const session = await stripe.checkout.sessions.create({
+//     success_url: `${process.env.FRONTEND_URL}/order/success?orderId=${order.id}`,
+//     cancel_url: `${process.env.FRONTEND_URL}/order/cancel?orderId=${order.id}`,
+//     payment_method_types: ["ideal", "card"],
+//     customer_email: user.email,
+//     automatic_tax: {
+//       enabled: true,
+//     },
+//     line_items: [
+//       {
+//         price_data: {
+//           unit_amount: Math.ceil(Number(body.totalAmount) * 100),
+//           currency: "eur",
+//           product_data: {
+//             name: `UGC.nl order #${order.id}`,
+//           },
+//         },
+//         quantity: 1,
+//       },
+//     ],
+//     metadata: {
+//       orderId: order.id,
+//     },
+//     //@TODO: if the creator id has not stripe account connected yet, it should not send this object
+//     payment_intent_data: {
+//       application_fee_amount: Math.ceil(Number(body.totalAmount * 100 * 0.2)),
+//       transfer_data: {
+//         destination: creator.stripeAccountId,
+//       },
+//     },
+//     mode: "payment",
+//   });
+
+//   res.status(httpStatus.CREATED).send(session);
+// });
+
+
 const createOrder = catchAsync(async (req, res) => {
-  const { body, file } = req;
-
-  const storageRef = ref(storage, `files/${file.originalname}`);
-
-  const metadata = {
-    contentType: file.mimetype,
-  };
-
-  const snapshot = await uploadBytesResumable(
-    storageRef,
-    file.buffer,
-    metadata
-  );
-
-  const downloadURL = await getDownloadURL(snapshot.ref);
+  const { body } = req;
 
   const order = await orderService.createOrder({
     ...body,
-    scriptFileUrl: downloadURL,
     buyerId: Number(body.buyerId),
-    packageId: Number(body.packageId),
+    packageId: body.packageId ? Number(body.packageId) : null,
+    offerId: body.offerId ? Number(body.offerId) : null,
     creatorId: Number(body.creatorId),
     totalAmount: Number(body.totalAmount),
     fastDelivery1Day: Boolean(body.fastDelivery1Day),
     status: "open",
   });
 
-  const user = await userService.getUserById(body.buyerId);
-  const creator = await userService.getUserById(body.creatorId);
+  let packageData
+  if (body.packageId) {
+    packageData = await getPackageById(body.packageId)
+  } else {
+    packageData = await getOfferById(body.offerId)
+  }
 
-  const session = await stripe.checkout.sessions.create({
-    success_url: `${process.env.FRONTEND_URL}/order/success?orderId=${order.id}`,
-    cancel_url: `${process.env.FRONTEND_URL}/order/cancel?orderId=${order.id}`,
-    payment_method_types: ["ideal", "card"],
-    customer_email: user.email,
-    automatic_tax: {
-      enabled: true,
-    },
-    line_items: [
-      {
-        price_data: {
-          unit_amount: Math.ceil(Number(body.totalAmount) * 100),
-          currency: "eur",
-          product_data: {
-            name: `UGC.nl order #${order.id}`,
-          },
-        },
-        quantity: 1,
-      },
-    ],
-    metadata: {
-      orderId: order.id,
-    },
-    //@TODO: if the creator id has not stripe account connected yet, it should not send this object
-    payment_intent_data: {
-      application_fee_amount: Math.ceil(Number(body.totalAmount * 100 * 0.2)),
-      transfer_data: {
-        destination: creator.stripeAccountId,
-      },
-    },
-    mode: "payment",
-  });
+  // Create the invoice
+  const lineItems = [{
+    description: packageData.description,
+    priceExcludingTax: Number(body.totalAmount),
+    taxAmount: 0,
+    totalPriceWithTax: Number(body.totalAmount),
+  }]
+  const invoiceData = {
+    invoiceDate: order.createdAt,
+    totalAmount: Number(body.totalAmount),
+    creatorId: Number(body.creatorId),
+    buyerId: Number(body.buyerId),
+    orderId: order.id,
+    lineItems
+  }
 
-  res.status(httpStatus.CREATED).send(session);
+  const invoice = await createInvoice(invoiceData);
+  console.log(invoice)
+
+  res.status(httpStatus.CREATED).send(order);
 });
 
 const getOrders = catchAsync(async (req, res) => {

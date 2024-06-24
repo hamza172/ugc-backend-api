@@ -16,7 +16,7 @@ router.post(
 // Get a list of invoices
 router.get(
   "/",
-  auth, // Add authentication middleware if needed
+  // auth, // Add authentication middleware if needed
   validate(invoiceValidation.getInvoices),
   invoiceController.getInvoices
 );

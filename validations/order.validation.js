@@ -3,14 +3,15 @@ const { objectId } = require("./custom.validation");
 
 const createOrder = {
   body: Joi.object().keys({
-    scriptFile: Joi.string().required(),
-    sceneLocation: Joi.string(),
+    scriptFile: Joi.string().allow(null),
+    sceneLocation: Joi.string().allow(null),
     extraInformation: Joi.string(),
     fastDelivery1Day: Joi.boolean(),
-    paymentMethod: Joi.string().required(),
+    paymentMethod: Joi.string().allow(null),
     creatorId: Joi.number().integer().required(),
     buyerId: Joi.number().integer().required(),
-    packageId: Joi.number().integer().required(),
+    packageId: Joi.number().integer().allow(null),
+    offerId: Joi.number().integer().allow(null),
     totalAmount: Joi.number(),
   }),
 };
@@ -49,6 +50,8 @@ const updateOrder = {
       creatorId: Joi.number(),
       status: Joi.string(),
       buyerId: Joi.number,
+      script: Joi.string(),
+      briefing: Joi.string(),
     })
     .min(1),
 };

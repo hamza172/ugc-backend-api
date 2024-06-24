@@ -3,7 +3,7 @@ const httpStatus = require("http-status");
 const Order = require("../models/order.model");
 const paginate = require("../utils/paginate");
 const Package = require("../models/package.model");
-const { User } = require("../models");
+const { User, Offer } = require("../models");
 const { Invoice } = require("../models/invoice.model");
 
 /**
@@ -26,6 +26,7 @@ const createOrder = async (orderBody) => {
  */
 const queryOrders = async (filters, options) => {
   const { page, limit, sortBy } = options;
+  console.log(page)
 
   const orders = await Order.findAndCountAll({
     where: filters,
@@ -33,6 +34,7 @@ const queryOrders = async (filters, options) => {
     order: [["createdAt", sortBy ? sortBy : "DESC"]],
     include: [
       { model: Package },
+      { model: Offer },
       { model: User, as: "user" },
       { model: User, as: "creator" },
       { model: Invoice },
@@ -62,6 +64,7 @@ const getOrderById = async (id) => {
     where: { id },
     include: [
       { model: Package },
+      { model: Offer },
       { model: User, as: "user" },
       { model: User, as: "creator" },
     ],

@@ -1,6 +1,7 @@
 const ApiError = require("../utils/ApiError");
 const httpStatus = require("http-status");
 const { Invoice, LineItem } = require("../models/invoice.model"); // Import your models as needed
+const paginate = require("../utils/paginate");
 
 /**
  * Create an invoice
@@ -44,7 +45,8 @@ const queryInvoices = async (filters, options) => {
       },
     ],
     ...paginate({ page, pageSize: limit }),
-    order: sortBy ? [sortBy.split(":")] : [],
+    order: [["createdAt", sortBy ? sortBy : "DESC"]],
+
   });
 
   return {

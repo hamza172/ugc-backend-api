@@ -36,13 +36,12 @@ const getOffer = {
 
 const updateOffer = {
   params: Joi.object().keys({
-    OfferId: Joi.required().custom(objectId),
+    offerId: Joi.required().custom(objectId),
   }),
   body: Joi.object()
     .keys({
-      email: Joi.string().email(),
-      password: Joi.string().custom(password),
-      name: Joi.string(),
+      status: Joi.string(),
+      messageId:Joi.number(),
     })
     .min(1),
 };
