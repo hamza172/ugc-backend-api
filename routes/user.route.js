@@ -17,6 +17,14 @@ router
   .get(validate(userValidation.getUsers), userController.getUsers);
 
 router
+  .route('/summary/:userId')
+  .get(
+    // auth(),
+    validate(userValidation.getUser),
+    userController.getUserMoneySummary
+  )
+
+router
   .route("/:userId")
   .get(
     auth(),

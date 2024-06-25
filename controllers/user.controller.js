@@ -28,6 +28,11 @@ const getUsers = catchAsync(async (req, res) => {
   res.send(result);
 });
 
+const getUserMoneySummary = catchAsync(async(req,res) =>{
+  const result = await userService.getUserByIdMoneySummary(req.params.userId)
+  res.send(result);
+})
+
 const getUser = catchAsync(async (req, res) => {
   const user = await userService.getUserById(req.params.userId);
 
@@ -112,4 +117,5 @@ module.exports = {
   getUser,
   updateUser,
   deleteUser,
+  getUserMoneySummary,
 };

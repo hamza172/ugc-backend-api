@@ -5,7 +5,7 @@ const paginate = require("../utils/paginate");
 const Package = require("../models/package.model");
 const Review = require("../models/review.model");
 const Order = require("../models/order.model");
-const { Op } = require("sequelize");
+const { Sequelize, Op } = require('sequelize');
 
 /**
  * Create a user
@@ -82,6 +82,21 @@ const getUserById = async (id) => {
   return user;
 };
 
+
+const getUserByIdMoneySummary = async (creatorId) => {
+  const user = Order.findAll({
+    attributes: [
+      [Sequelize.literal(`SUM(CASE WHEN status = 'open' THEN "totalAmount" ELSE 0 END)`), 'activeorder'],
+      [Sequelize.literal(`SUM(CASE WHEN status = 'afgerond' THEN "totalAmount" ELSE 0 END)`), 'payable'],
+      [Sequelize.literal(`SUM(CASE WHEN  EXTRACT(MONTH FROM  "order"."createdAt") = 6 THEN "totalAmount" ELSE 0 END)`), 'monthly']
+    ],
+    where: { creatorId },
+    group: ['user.id'],
+    include: [{ model: User, as: "user" }],
+  })
+  return user;
+};
+
 /**
  * Get user by email
  * @param {string} email
@@ -134,4 +149,5 @@ module.exports = {
   getUserByEmail,
   updateUserById,
   deleteUserById,
+  getUserByIdMoneySummary
 };
