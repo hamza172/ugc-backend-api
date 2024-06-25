@@ -128,6 +128,10 @@ User.init(
     useAlternateEmail: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
+    },
+    topCreator: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
     }
   },
   {

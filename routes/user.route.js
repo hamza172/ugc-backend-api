@@ -27,7 +27,7 @@ router
 router
   .route("/:userId")
   .get(
-    auth(),
+    // auth(),
     validate(userValidation.getUser),
     userController.getUser
   )

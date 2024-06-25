@@ -45,9 +45,9 @@ const queryUsers = async (filters, options) => {
   const users = await User.findAndCountAll({
     where: {
       ...filters,
-      video1: {
-        [Op.ne]: null,
-      },
+      // video1: {
+      //   [Op.ne]: null,
+      // },
     },
     ...paginate({ page, pageSize: limit }),
     order: [["createdAt", sortBy ? sortBy : "DESC"]],
