@@ -15,7 +15,7 @@ const bcrypt = require("bcryptjs");
 const loginUserWithEmailAndPassword = async (email, password) => {
   const user = await userService.getUserByEmail(email);
   if (!user) {
-    throw new ApiError(httpStatus.UNAUTHORIZED, "User doesnt Exist");
+    throw new ApiError(httpStatus.UNAUTHORIZED, "Geen account gevonden, maak een account aan. ");
   }
 
   const isPasswordMatch = await bcrypt.compare(
@@ -24,7 +24,7 @@ const loginUserWithEmailAndPassword = async (email, password) => {
   );
 
   if (!user || !isPasswordMatch) {
-    throw new ApiError(httpStatus.UNAUTHORIZED, "Incorrect email or password");
+    throw new ApiError(httpStatus.UNAUTHORIZED, "Verkeerd wachtwoord");
   }
 
   if (!user.isEmailVerified) {
