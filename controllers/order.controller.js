@@ -15,6 +15,7 @@ const {
 const { LineItem } = require("../models");
 const { getOfferById } = require("../services/offers.service");
 const { createInvoice } = require("../services/invoice.service");
+const { getPackageById } = require("../services/package.service");
 
 const firebaseConfig = {
   apiKey: process.env.FIREBASE_API_KEY,
