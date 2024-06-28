@@ -30,7 +30,7 @@ const getOffers = {
 
 const getOffer = {
   params: Joi.object().keys({
-    OfferId: Joi.string().required(),
+    offerId: Joi.string().required(),
   }),
 };
 

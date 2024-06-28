@@ -14,10 +14,10 @@ const createChat = catchAsync(async (req, res) => {
       code: httpStatus.OK,
       chat,
     });
+  } else {
+    const newChat = await chatService.createChat(req.body);
+    res.status(httpStatus.CREATED).send(newChat);
   }
-
-  const newChat = await chatService.createChat(req.body);
-  res.status(httpStatus.CREATED).send(newChat);
 });
 
 const getChatByUsers = catchAsync(async (req, res) => {

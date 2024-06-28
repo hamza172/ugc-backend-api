@@ -12,7 +12,6 @@ const Offer = require("../models/offer.model");
  * @returns {Promise<Chat>}
  */
 const createChat = async (chatBody) => {
-  console.log("test")
   return await Chat.create(chatBody);
 };
 

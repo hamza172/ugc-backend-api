@@ -39,7 +39,7 @@ const getPackages = {
 
 const getPackage = {
   params: Joi.object().keys({
-    packageId: Joi.string().required(),
+    PackageId: Joi.string().required(),
   }),
 };
 

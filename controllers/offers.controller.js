@@ -17,7 +17,7 @@ const getOffers = catchAsync(async (req, res) => {
 });
 
 const getOffer = catchAsync(async (req, res) => {
-  const offer = await offerService.getofferById(req.params.offerId);
+  const offer = await offerService.getOfferById(req.params.offerId);
 
   if (!offer) {
     throw new ApiError(httpStatus.NOT_FOUND, "offer not found");
