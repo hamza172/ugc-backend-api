@@ -33,7 +33,7 @@ const getUsers = {
     limit: Joi.number().integer(),
     page: Joi.number().integer(),
     niches: Joi.string(),
-    topCreator: Joi.boolean()
+    topCreator: Joi.boolean(),
   }),
 };
 
