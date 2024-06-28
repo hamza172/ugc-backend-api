@@ -10,7 +10,10 @@ const createChat = catchAsync(async (req, res) => {
   const chat = await chatService.getChatByUsers(creatorId, userId);
 
   if (chat) {
-    throw new ApiError(httpStatus.NOT_FOUND, "Chat already exists");
+    res.status(httpStatus.OK).send({
+      code: httpStatus.OK,
+      chat,
+    });
   }
 
   const newChat = await chatService.createChat(req.body);

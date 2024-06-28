@@ -12,7 +12,7 @@ const createUser = catchAsync(async (req, res) => {
 });
 
 const getUsers = catchAsync(async (req, res) => {
-  const filter = pick(req.query, ["name", "role", "niches"]);
+  const filter = pick(req.query, ["name", "role", "niches",'topCreator']);
 
   const filters = {
     ...filter,
