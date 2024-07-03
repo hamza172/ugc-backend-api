@@ -47,9 +47,10 @@ const port = process.env.PORT || defaultPort;
     const io = socket(server, {
       cors: {
         origin:
-          process.env.NODE_ENV === "development"
-            ? "http://localhost:3000"
-            : "https://www.ugc.nl",
+        '*'
+          // process.env.NODE_ENV === "development"
+          //   ? "http://localhost:3000"
+          //   : "https://www.ugc.nl",
       },
     });
     io.on("connection", (socket) => {
