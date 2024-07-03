@@ -43,6 +43,7 @@ const queryUsers = async (filters, options) => {
   const { page, limit, sortBy } = options;
 
   const users = await User.findAndCountAll({
+    
     where: {
       ...filters,
       // video1: {
@@ -53,7 +54,6 @@ const queryUsers = async (filters, options) => {
     order: [["createdAt", sortBy ? sortBy : "DESC"]],
     include: [Package, Review],
   });
-
   return {
     data: users.rows,
     meta: {

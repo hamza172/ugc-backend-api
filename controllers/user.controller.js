@@ -12,13 +12,42 @@ const createUser = catchAsync(async (req, res) => {
 });
 
 const getUsers = catchAsync(async (req, res) => {
-  const filter = pick(req.query, ["name", "role", "niches",'topCreator']);
+  const filter = pick(req.query, ["name", "role", "niches", 'topCreator']);
+  console.log(req.query)
 
-  const filters = {
+  const currentDate = new Date();
+  const ageDate = new Date(currentDate.setFullYear(currentDate.getFullYear() - req.query.age));
+  let filters = {
     ...filter,
+
+    ...(req.query.gender && {
+      gender: req.query.gender,
+    }),
+
+    ...(req.query.age && {
+      dayOfBirth: {
+        [Op.lte]: ageDate,
+      },
+    }),
+    ...(req.query.price && {
+      ['$packages.price$']: {
+        [Op.lte]: req.query.price,
+      },
+    }),
     ...(req.query.niches && {
       niches: {
-        [Op.contains]: [req.query.niches],
+        // [Op.contains]: [req.query.niches],
+        [Op.like]: `%${req.query.niches}%`,
+      },
+    }),
+    ...(req.query.languages && {
+      languages: {
+        [Op.like]: `%${req.query.languages}%`,
+      },
+    }),
+    ...(req.query.withVideo && {
+      video1: {
+        [Op.ne]: null,
       },
     }),
   };
@@ -28,7 +57,7 @@ const getUsers = catchAsync(async (req, res) => {
   res.send(result);
 });
 
-const getUserMoneySummary = catchAsync(async(req,res) =>{
+const getUserMoneySummary = catchAsync(async (req, res) => {
   const result = await userService.getUserByIdMoneySummary(req.params.userId)
   res.send(result);
 })
@@ -49,6 +78,7 @@ const updateUser = catchAsync(async (req, res) => {
   } else {
 
     const { profilePicture, video1, video2, video3, video4 } = req.files;
+    console.log(req.files)
     let profileLink = null;
     if (profilePicture) {
       profileLink = await Uploader({
@@ -65,25 +95,45 @@ const updateUser = catchAsync(async (req, res) => {
     let videoUrl4 = null;
 
     if (video1) {
-      videoUrl1 = await Uploader({ location: "firebase", file: video1[0] });
+      videoUrl1 = await Uploader({
+        location: "aws_s3",
+        file: video1[0],
+        // sizeLimit: true,
+      });
+      // await Uploader({ location: "firebase", file: video1 });
     }
     if (video2) {
-      videoUrl2 = await Uploader({ location: "firebase", file: video2[0] });
+      // videoUrl2 = await Uploader({ location: "firebase", file: video2 });
+      videoUrl2 = await Uploader({
+        location: "aws_s3",
+        file: video2[0],
+        // sizeLimit: true,
+      });
     }
     if (video3) {
-      videoUrl3 = await Uploader({ location: "firebase", file: video3[0] });
+      // videoUrl3 = await Uploader({ location: "firebase", file: video3 });
+      videoUrl3 = await Uploader({
+        location: "aws_s3",
+        file: video3[0],
+        // sizeLimit: true,
+      });
     }
     if (video4) {
-      videoUrl4 = await Uploader({ location: "firebase", file: video4[0] });
+      // videoUrl4 = await Uploader({ location: "firebase", file: video4 });
+      videoUrl4 = await Uploader({
+        location: "aws_s3",
+        file: video4[0],
+        // sizeLimit: true,
+      });
     }
     //-----------------------------------------------------------------------------
     const updatedUser = {
       ...req.body,
-      profilePicture: profileLink,
-      video1: videoUrl1 ? videoUrl1 : null,
-      video2: videoUrl2 ? videoUrl2 : null,
-      video3: videoUrl3 ? videoUrl3 : null,
-      video4: videoUrl4 ? videoUrl4 : null,
+      profilePicture: profilePicture ? profileLink : req.body.profilePicture,
+      video1: video1 ? videoUrl1 : req.body.video1,
+      video2: video2 ? videoUrl2 : req.body.video2,
+      video3: video3 ? videoUrl3 : req.body.video3,
+      video4: video4 ? videoUrl4 : req.body.video4,
       // availability: req.body.availability === 'true' ? true : false
     };
     user = await userService.updateUserById(req.params.userId, updatedUser);

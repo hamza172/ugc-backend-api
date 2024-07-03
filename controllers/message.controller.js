@@ -3,9 +3,41 @@ const pick = require("../utils/pick");
 const ApiError = require("../utils/ApiError");
 const catchAsync = require("../utils/catchAsync");
 const { messageService, chatService } = require("../services");
+const Uploader = require("../utils/uploader");
+
 
 const createMessage = catchAsync(async (req, res) => {
-  const message = await messageService.createMessage(req.body);
+  let message
+  console.log(req.files)
+  if (!(req.files && Object.keys(req.files).length >= 1)) {
+    message = await messageService.createMessage(req.body);
+  } else {
+    const { attachment } = req.files;
+    let attachmentLink = null;
+    if (attachment) {
+      attachmentLink = await Uploader({
+        location: "aws_s3",
+        file: attachment[0],
+        sizeLimit: true,
+      });
+    }
+    console.log(req.body)
+    const updatedMessage = {
+      ...req.body,
+      attachment: attachmentLink
+    };
+    message = await messageService.createMessage(updatedMessage);
+  }
+
+  if (!message) {
+    res.send({
+      code: httpStatus.INTERNAL_SERVER_ERROR,
+      message: "Failed to Send Message!",
+    });
+    return;
+  }
+
+
   res.status(httpStatus.CREATED).send(message);
 });
 

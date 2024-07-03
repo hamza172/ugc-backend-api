@@ -22,7 +22,7 @@ const createUser = {
     bio: Joi.string(),
     niches: Joi.string(),
     languages: Joi.string(),
-  }), 
+  }),
 };
 
 const getUsers = {
@@ -30,10 +30,15 @@ const getUsers = {
     name: Joi.string(),
     role: Joi.string(),
     sortBy: Joi.string(),
+    gender: Joi.string().allow(null, ''),
+    age: Joi.number().allow(null, ''),
+    price: Joi.number().allow(null, ''),
+    languages: Joi.string().allow(null, ''),
     limit: Joi.number().integer(),
     page: Joi.number().integer(),
-    niches: Joi.string(),
-    topCreator: Joi.boolean()
+    niches: Joi.string().allow(null, ''),
+    topCreator: Joi.boolean(),
+    withVideo: Joi.boolean(),
   }),
 };
 

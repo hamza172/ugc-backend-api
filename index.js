@@ -13,7 +13,9 @@ const swaggerJSDoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 const morgan = require('morgan')
 const logger = require('morgan')
-// const socket = require("socket.io");
+const socket = require("socket.io");
+const http = require("http");
+const { messageService } = require("./services");
 
 const swaggerDefinition = {
   openapi: "3.0.0",
@@ -28,19 +30,6 @@ const options = {
   apis: ["./routes/*.js"],
 };
 
-
-// const Activity = require("./services/activity.service");
-// const test = async () => {
-//   // return await Activity.create({
-//   //   "userId":78,
-//   //   "message":"testing",
-//   //   "orderId":3
-//   // });
-//   return await Activity.getActivityByOrderId(3).then(res=>console.log(res));
-// };
-
-// test()
-
 const swaggerSpec = swaggerJSDoc(options);
 
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
@@ -54,7 +43,43 @@ const port = process.env.PORT || defaultPort;
     await sequelize.sync({ alter: true });
     console.log("✅✅✅ Database sync complete.");
 
-    app.listen(port, () => {
+    const server = http.createServer(app);
+    const io = socket(server, {
+      cors: {
+        origin:
+          process.env.NODE_ENV === "development"
+            ? "http://localhost:3000"
+            : "https://www.ugc.nl",
+      },
+    });
+    io.on("connection", (socket) => {
+      console.log("Client connected:", socket.id);
+
+      socket.on("sendMessage", async (message) => {
+        const newMessage = await messageService.createMessage(message);
+        io.emit("message", newMessage);
+      });
+
+      socket.on("sendoffer", async (message) => {
+        io.emit("message", message);
+      });
+
+
+      socket.on("typing", (userId) => {
+        socket.broadcast.emit("sendTyping", userId);
+      });
+
+      socket.on("stopTyping", (userId) => {
+        socket.broadcast.emit("sendStopTyping", userId);
+      });
+
+      socket.on("disconnect", () => {
+        console.log("Client disconnected:", socket.id);
+      });
+    });
+
+
+    server.listen(port, () => {
       console.log(`⚡⚡⚡ API is running on http://localhost:${port}`);
     });
 
@@ -83,26 +108,5 @@ app.use((req, res, next) => {
 
 app.use(errorHandler);
 app.use(errorConverter);
-
-// const io = socket(server, {
-//   cors: {
-//     origin:
-//       process.env.NODE_ENV === "development"
-//         ? "http://localhost:3001"
-//         : "https://www.ugc.nl",
-//   },
-// });
-
-// io.on("connection", (socket) => {
-//   console.log("connected to the socket...");
-
-//   socket.on("onTyping", (userId) => {
-//     io.emit("sendTyping", userId);
-//   });
-
-//   socket.on("onStopTyping", (userId) => {
-//     io.emit("sendStopTyping", userId);
-//   });
-// });
 
 module.exports = app;

@@ -32,14 +32,14 @@ router
     userController.getUser
   )
   .patch(
-    auth("updateRequests"),
+    // auth("updateRequests"),
     upload.fields([
-      { name: "profilePicture" },
+      { name: "profilePicture", maxCount: 1 },
       { name: "video1" },
       { name: "video2" },
       { name: "video3" },
-      { name: "video4" }]),
-
+      { name: "video4" }
+    ]),
     validate(userValidation.updateUser),
     userController.updateUser
   )
