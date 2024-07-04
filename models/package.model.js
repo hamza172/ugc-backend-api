@@ -136,9 +136,10 @@ Chat.belongsTo(User, {
 Message.belongsTo(Chat);
 Order.belongsTo(Package);
 Order.belongsTo(Offer);
-Review.belongsTo(User);
-Review.belongsTo(Order);
-User.hasMany(Review);
+Review.belongsTo(User, { foreignKey: 'userId' });
+Review.belongsTo(Order, { foreignKey: 'orderId' });
+User.hasMany(Review, { foreignKey: 'userId' });
+Order.hasOne(Review, { foreignKey: 'orderId' });
 User.hasMany(Order, {
   foreignKey: "creatorId",
 });

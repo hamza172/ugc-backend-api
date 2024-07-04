@@ -54,8 +54,11 @@ Order.init(
     script: {
       type: DataTypes.STRING,
     },
-    
-    
+    submittedVideos: {
+      type: DataTypes.ARRAY(DataTypes.STRING),
+    },
+
+
   },
 
   {

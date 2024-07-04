@@ -3,8 +3,10 @@ const pick = require("../utils/pick");
 const ApiError = require("../utils/ApiError");
 const catchAsync = require("../utils/catchAsync");
 const { userService } = require("../services");
-const { Op } = require("sequelize");
+const { Op, Sequelize } = require("sequelize");
 const Uploader = require("../utils/uploader");
+const { sequelize } = require("../models/user.model");
+const Package = require("../models/package.model");
 
 const createUser = catchAsync(async (req, res) => {
   const user = await userService.createUser(req.body);
@@ -17,6 +19,7 @@ const getUsers = catchAsync(async (req, res) => {
 
   const currentDate = new Date();
   const ageDate = new Date(currentDate.setFullYear(currentDate.getFullYear() - req.query.age));
+
   let filters = {
     ...filter,
 
@@ -24,14 +27,18 @@ const getUsers = catchAsync(async (req, res) => {
       gender: req.query.gender,
     }),
 
+    ...(req.query.search && {
+      [Op.or]: [
+        { firstName: { [Op.like]: `%${req.query.search}%` } },
+        { lastName: { [Op.like]: `%${req.query.search}%` } },
+        { niches: { [Op.like]: `%${req.query.search}%` } },
+        { languages: { [Op.like]: `%${req.query.search}%` } },
+      ]
+    }),
+
     ...(req.query.age && {
       dayOfBirth: {
         [Op.lte]: ageDate,
-      },
-    }),
-    ...(req.query.price && {
-      ['$packages.price$']: {
-        [Op.lte]: req.query.price,
       },
     }),
     ...(req.query.niches && {
@@ -51,6 +58,16 @@ const getUsers = catchAsync(async (req, res) => {
       },
     }),
   };
+
+  if (req.query.priceRange) {
+    const priceFilters = {
+      '50-100': { [Op.between]: [50, 100] },
+      '100-200': { [Op.between]: [100, 200] },
+      '200+': { [Op.gte]: 200 },
+    };
+
+    filters['$packages.totalCost$'] = priceFilters[req.query.priceRange];
+  }
 
   const options = pick(req.query, ["sortBy", "limit", "page"]);
   const result = await userService.queryUsers(filters, options);

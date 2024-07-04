@@ -32,13 +32,14 @@ const getUsers = {
     sortBy: Joi.string(),
     gender: Joi.string().allow(null, ''),
     age: Joi.number().allow(null, ''),
-    price: Joi.number().allow(null, ''),
+    price: Joi.string().allow(null, ''),
     languages: Joi.string().allow(null, ''),
     limit: Joi.number().integer(),
     page: Joi.number().integer(),
     niches: Joi.string().allow(null, ''),
     topCreator: Joi.boolean(),
     withVideo: Joi.boolean(),
+    search: Joi.string().allow(null,'')
   }),
 };
 

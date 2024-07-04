@@ -52,6 +52,9 @@ const updateOrder = {
       buyerId: Joi.number,
       script: Joi.string(),
       briefing: Joi.string(),
+      attachment: Joi.any(),
+      submittedVideos: Joi.any(),
+      submission: Joi.any()
     })
     .min(1),
 };

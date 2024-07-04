@@ -16,7 +16,7 @@ router
 router
   .route("/:orderId")
   .get(validate(orderValidation.getOrder), orderController.getOrder)
-  .put(upload.array("videos"), orderController.updateOrder)
+  .put(upload.array("attachment"), orderController.updateOrder)
   .delete(
     auth(),
     validate(orderValidation.deleteOrder),

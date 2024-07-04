@@ -70,11 +70,12 @@ const refreshAuth = async (refreshToken) => {
     if (!user) {
       throw new Error();
     }
-    console.log("id:", refreshTokenDoc.id)
-    await Token.deleteOne({ id: refreshTokenDoc.id });
+
+    // Using findOneAndDelete instead of deleteOne
+    await Token.destroy({ where: { id: refreshTokenDoc.id } });
     return tokenService.generateAuthTokens(user);
   } catch (error) {
-    console.log("ERROR: ", error)
+    console.log("ERROR: ", error);
     throw new ApiError(httpStatus.UNAUTHORIZED, "Please authenticate");
   }
 };

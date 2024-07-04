@@ -4,6 +4,8 @@ const ApiError = require("../utils/ApiError");
 const catchAsync = require("../utils/catchAsync");
 const { orderService, userService } = require("../services");
 const { stripe } = require("../config/stripe");
+const Uploader = require("../utils/uploader");
+
 
 const { initializeApp } = require("firebase/app");
 const {
@@ -158,43 +160,46 @@ const getOrder = catchAsync(async (req, res) => {
 });
 
 const updateOrder = catchAsync(async (req, res) => {
-  if (req.files) {
-    const videosUrls = await Promise.all(
-      req.files.map(async (file) => {
-        const storageRef = ref(storage, `files/${file.originalname}`);
-
-        const metadata = {
-          contentType: file.mimetype,
-        };
-
-        const snapshot = await uploadBytesResumable(
-          storageRef,
-          file.buffer,
-          metadata
-        );
-
-        const downloadURL = await getDownloadURL(snapshot.ref);
-
-        return downloadURL;
-      })
-    );
-
-    const body = {
-      ...req.body,
-      uploadVideos: videosUrls,
-    };
-
-    const order = await orderService.updateOrderById(req.params.orderId, body);
-
-    res.send(order);
+  let order;
+  console.log("Submission: ", req.body.submission)
+  if (!(req.files && Object.keys(req.files).length >= 1)) {
+    order = await orderService.updateOrderById(req.params.orderId, req.body);
   } else {
-    const order = await orderService.updateOrderById(
-      req.params.orderId,
-      req.body
-    );
-    res.send(order);
+    let uploads = [];
+    let filesArray = [];
+    if (Array.isArray(req.files)) {
+      filesArray = req.files;
+    } else if (req.files && typeof req.files === 'object') {
+      filesArray = Object.values(req.files);
+    }
+    await Promise.all(filesArray.map(async (file) => {
+      let url = await Uploader({
+        location: "aws_s3",
+        file: file,
+        sizeLimit: true,
+      });
+      uploads.push(url);
+    }));
+    let body
+    if (req.body.submission) {
+      body = {
+        ...req.body,
+        submittedVideos: uploads,
+        status: 'afgerond'
+      };
+    } else {
+      body = {
+        ...req.body,
+        uploadVideos: uploads,
+      };
+    }
+
+    order = await orderService.updateOrderById(req.params.orderId, body);
   }
+
+  res.send(order);
 });
+
 
 const deleteOrder = catchAsync(async (req, res) => {
   await orderService.deleteOrderById(req.params.orderId);

@@ -4,7 +4,7 @@ const { password, objectId } = require("./custom.validation");
 const createReview = {
   body: Joi.object().keys({
     text: Joi.string(),
-    stars: Joi.number().integer().required(),
+    stars: Joi.number().required(),
     orderId: Joi.number().integer().required(),
     userId: Joi.number().integer().required(),
   }),

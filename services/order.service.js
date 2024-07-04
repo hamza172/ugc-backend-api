@@ -5,6 +5,7 @@ const paginate = require("../utils/paginate");
 const Package = require("../models/package.model");
 const { User, Offer } = require("../models");
 const { Invoice } = require("../models/invoice.model");
+const Review = require("../models/review.model");
 
 /**
  * Create a order
@@ -67,6 +68,7 @@ const getOrderById = async (id) => {
       { model: Offer },
       { model: User, as: "user" },
       { model: User, as: "creator" },
+      { model: Review },
     ],
   });
 

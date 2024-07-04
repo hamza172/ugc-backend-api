@@ -9,7 +9,7 @@ Review.init(
       type: DataTypes.STRING,
     },
     stars: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
       validate: {
         min: 0,
