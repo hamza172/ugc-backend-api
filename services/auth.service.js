@@ -61,6 +61,7 @@ const logout = async (refreshToken) => {
  */
 const refreshAuth = async (refreshToken) => {
   try {
+
     const refreshTokenDoc = await tokenService.verifyToken(
       refreshToken,
       tokenTypes.REFRESH
@@ -72,7 +73,7 @@ const refreshAuth = async (refreshToken) => {
     }
 
     // Using findOneAndDelete instead of deleteOne
-    await Token.destroy({ where: { id: refreshTokenDoc.id } });
+    await Token.destroy({ where: { id: refreshTokenDoc.user } });
     return tokenService.generateAuthTokens(user);
   } catch (error) {
     console.log("ERROR: ", error);

@@ -21,7 +21,15 @@ Activity.init(
       message: {
         type: DataTypes.STRING,
         allowNull: true,
-      }
+      },
+      update: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      ugc: {
+        type: DataTypes.BOOLEAN,
+      },
+      
     },
     {
       sequelize,

@@ -59,14 +59,14 @@ const getUsers = catchAsync(async (req, res) => {
     }),
   };
 
-  if (req.query.priceRange) {
+  if (req.query.price) {
     const priceFilters = {
       '50-100': { [Op.between]: [50, 100] },
       '100-200': { [Op.between]: [100, 200] },
       '200+': { [Op.gte]: 200 },
     };
 
-    filters['$packages.totalCost$'] = priceFilters[req.query.priceRange];
+    filters['$packages.totalCost$'] = priceFilters[req.query.price];
   }
 
   const options = pick(req.query, ["sortBy", "limit", "page"]);

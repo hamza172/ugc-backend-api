@@ -4,6 +4,8 @@ const { objectId } = require("./custom.validation");
 const createActivity = {
   body: Joi.object().keys({
     message: Joi.string().allow(null),
+    update: Joi.string().allow(null),
+    ugc: Joi.boolean().allow(null),
     attachment: Joi.string().allow(null),
     userId: Joi.number().integer(),
     orderId: Joi.number().integer()
