@@ -63,6 +63,7 @@ const register = catchAsync(async (req, res) => {
       role: req?.body?.role || "creator",
       niches: niches ? niches : null,
       languages: languages ? languages : null,
+      isEmailVerified: true,
       video1: videoUrl1 ? videoUrl1 : null,
       video2: videoUrl2 ? videoUrl2 : null,
       video3: videoUrl3 ? videoUrl3 : null,
