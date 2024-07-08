@@ -75,6 +75,11 @@ Package.init(
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
+    physicalProducts: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+
     description: {
       type: DataTypes.STRING,
     },
