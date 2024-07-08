@@ -61,6 +61,21 @@ User.init(
     country: {
       type: DataTypes.STRING,
     },
+    physicalStreet: {
+      type: DataTypes.STRING,
+    },
+    physicalHouseNumber: {
+      type: DataTypes.STRING,
+    },
+    physicalPostalCode: {
+      type: DataTypes.STRING,
+    },
+    physicalCity: {
+      type: DataTypes.STRING,
+    },
+    physicalCountry: {
+      type: DataTypes.STRING,
+    },
     phoneNumber: {
       type: DataTypes.STRING,
     },
@@ -78,7 +93,7 @@ User.init(
     },
     profileName: {
       type: DataTypes.STRING,
-    }, 
+    },
     languages: {
       type: DataTypes.STRING,
     },
