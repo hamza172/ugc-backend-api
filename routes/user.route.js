@@ -44,7 +44,7 @@ router
     userController.updateUser
   )
   .delete(
-    auth("deleteUsers"),
+    auth(),
     validate(userValidation.deleteUser),
     userController.deleteUser
   );

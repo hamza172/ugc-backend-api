@@ -43,7 +43,7 @@ const queryUsers = async (filters, options) => {
   const { page, limit, sortBy } = options;
 
   const users = await User.findAndCountAll({
-    
+
     where: {
       ...filters,
     },
@@ -83,7 +83,7 @@ const getUserById = async (id) => {
 const getUserByIdMoneySummary = async (creatorId) => {
   const user = Order.findAll({
     attributes: [
-      [Sequelize.literal(`SUM(CASE WHEN status = 'open' THEN "totalAmount" ELSE 0 END)`), 'activeorder'],
+      [Sequelize.literal(`COUNT(CASE WHEN status = 'open' THEN 1 ELSE NULL END)`), 'activeOrder'],
       [Sequelize.literal(`SUM(CASE WHEN status = 'afgerond' THEN "totalAmount" ELSE 0 END)`), 'payable'],
       [Sequelize.literal(`SUM(CASE WHEN  EXTRACT(MONTH FROM  "order"."createdAt") = 6 THEN "totalAmount" ELSE 0 END)`), 'monthly']
     ],
@@ -133,8 +133,46 @@ const deleteUserById = async (userId) => {
   if (!user) {
     throw new ApiError(httpStatus.NOT_FOUND, "User not found");
   }
+  if (user.role === 'creator') {
+    await Order.update(
+      { status: 'geannuleerd' },
+      { where: { creatorId: userId } }
+    );
+  } else if (user.role === 'company') {
+    await Order.update(
+      { status: 'geannuleerd' },
+      { where: { buyerId: userId } }
+    );
+  }
+  // Anonymize the user data
+  const fieldsToAnonymize = {};
+  const userAttributes = User.rawAttributes;
 
-  const deletedUser = await User.destroy({ where: { id: userId } });
+  Object.keys(userAttributes).forEach((attribute) => {
+    if (
+      attribute !== 'id' &&
+      attribute !== 'createdAt' &&
+      attribute !== 'updatedAt' &&
+      attribute !== 'dayOfBirth' &&
+      attribute !== 'role'
+    ) {
+      const attributeType = userAttributes[attribute].type;
+      if (attributeType instanceof Sequelize.BOOLEAN) {
+      } else if (attributeType instanceof Sequelize.INTEGER || attributeType instanceof Sequelize.FLOAT) {
+      } else {
+        fieldsToAnonymize[attribute] = '';
+      }
+    }
+  });
+
+  const deletedUser = await User.update(
+    {
+      ...fieldsToAnonymize,
+      firstName: 'Onbekende',
+      lastName: "gebruiker"
+    },
+    { where: { id: userId } }
+  );
 
   return deletedUser;
 };
