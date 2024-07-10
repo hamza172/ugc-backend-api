@@ -14,7 +14,7 @@ const register = catchAsync(async (req, res) => {
   let User;
   console.log(req.body)
   if (!(req.files && Object.keys(req.files).length >= 1)) {
-    User = await userService.createUser(req.body);
+    User = await userService.createUser({ ...req.body, isEmailVerified: true });
   } else {
     // -------------------- UPLOADING --------------------------------------
     //1. Upload the profile picture to S3 Storage

@@ -115,7 +115,6 @@ User.init(
     },
     isEmailVerified: {
       type: DataTypes.BOOLEAN,
-      defaultValue: false,
     },
     availability: {
       type: DataTypes.BOOLEAN,
