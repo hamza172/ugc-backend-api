@@ -30,6 +30,13 @@ router.post(
   authController.register
 );
 
+router.post(
+  "/validate-email",
+    validate(userValidation.validateEmail),
+  authController.validateEmail
+);
+
+
 /**
  * @swagger
  * /login:

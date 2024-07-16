@@ -29,6 +29,21 @@ const createUser = async (userBody) => {
 
   return await User.create(userBody);
 };
+const validateEmail = async (userBody) => {
+  let user
+  if (userBody.role === 'company') {
+    user = await User.findOne({ where: { email: userBody.email, role: 'company' } });
+  } else {
+    user = await User.findOne({ where: { email: userBody.email, role: 'creator' } });
+  }
+
+  if (user) {
+    return false
+  } else {
+    return true
+  }
+
+};
 
 /**
  * Query for users
@@ -188,5 +203,6 @@ module.exports = {
   getUserByEmail,
   updateUserById,
   deleteUserById,
-  getUserByIdMoneySummary
+  getUserByIdMoneySummary,
+  validateEmail
 };

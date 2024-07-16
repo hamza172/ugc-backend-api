@@ -12,7 +12,6 @@ const Uploader = require("../utils/uploader");
 
 const register = catchAsync(async (req, res) => {
   let User;
-  console.log(req.body)
   if (!(req.files && Object.keys(req.files).length >= 1)) {
     User = await userService.createUser({ ...req.body, isEmailVerified: true });
   } else {
@@ -87,6 +86,13 @@ const register = catchAsync(async (req, res) => {
   res.status(httpStatus.CREATED).send({ User, tokens });
 });
 
+const validateEmail = catchAsync(async (req, res) => {
+
+  let User = await userService.validateEmail(req.body);
+  res.send({ User });
+
+})
+
 const login = catchAsync(async (req, res) => {
   const { email, password } = req.body;
 
@@ -148,4 +154,5 @@ module.exports = {
   sendVerificationEmail,
   verifyEmail,
   changePassword,
+  validateEmail
 };

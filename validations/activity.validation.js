@@ -6,7 +6,7 @@ const createActivity = {
     message: Joi.string().allow(null),
     update: Joi.string().allow(null),
     ugc: Joi.boolean().allow(null),
-    attachment: Joi.string().allow(null),
+    attachment: Joi.any(),
     userId: Joi.number().integer(),
     orderId: Joi.number().integer()
   }),

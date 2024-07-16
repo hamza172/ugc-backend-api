@@ -13,17 +13,31 @@ const createUser = {
     ccn: Joi.string(),
     dayOfBirth: Joi.string(),
     gender: Joi.string(),
-    street: Joi.string().required(),
-    houseNumber: Joi.string().required(),
-    postalCode: Joi.string().required(),
-    city: Joi.string().required(),
-    country: Joi.string().required(),
+    street: Joi.string(),
+    houseNumber: Joi.string(),
+    postalCode: Joi.string(),
+    city: Joi.string(),
+    country: Joi.string(),
+    physicalStreet: Joi.string(),
+    physicalHouseNumber: Joi.string(),
+    physicalPostalCode: Joi.string(),
+    physicalCity: Joi.string(),
+    physicalCountry: Joi.string(),
     phoneNumber: Joi.string().required(),
     bio: Joi.string(),
     niches: Joi.string(),
     languages: Joi.string(),
   }),
 };
+
+
+const validateEmail = {
+  body: Joi.object().keys({
+    email: Joi.string().required().email(),
+    role: Joi.string().required().valid("user", "admin", "creator", "company"),
+  }),
+};
+
 
 const getUsers = {
   query: Joi.object().keys({
@@ -39,7 +53,7 @@ const getUsers = {
     niches: Joi.string().allow(null, ''),
     topCreator: Joi.boolean(),
     withVideo: Joi.boolean(),
-    search: Joi.string().allow(null,'')
+    search: Joi.string().allow(null, '')
   }),
 };
 
@@ -116,4 +130,5 @@ module.exports = {
   getUser,
   updateUser,
   deleteUser,
+  validateEmail
 };

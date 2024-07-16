@@ -1,7 +1,7 @@
 const multer = require("multer");
 const { memoryStorage } = require("multer");
 const AppError = require("./ApiError");
-
+const path = require("path");
 
 const storage = memoryStorage();
 
@@ -9,10 +9,14 @@ const upload = multer({
   storage: storage,
   limits: { fileSize: 50 * 1024 * 1024 },
   fileFilter: (req, file, callback) => {
-    //   console.log("*****************" , file);
-      if (file.mimetype.startsWith("image/")) {
-          // For image files
-          if (file.size > 1 * 1024) {
+    // Define supported image and video MIME types
+    const imageMimeTypes = ["image/jpeg", "image/png", "image/gif", "image/heic"];
+    const videoMimeTypes = ["video/mp4", "video/quicktime"];
+    const fileExtension = path.extname(file.originalname).toLowerCase();
+
+    if (imageMimeTypes.includes(file.mimetype) || fileExtension === '.heic') {
+      // For image files
+      if (file.size > 1 * 1024) {
         // If image file size exceeds the limit
         const error = new AppError(
           400,
@@ -22,7 +26,7 @@ const upload = multer({
       } else {
         callback(null, true);
       }
-    } else if (file.mimetype.startsWith("video/")) {
+    } else if (videoMimeTypes.includes(file.mimetype)) {
       // For video files
       if (file.size > 50 * 1024 * 1024) {
         // If video file size exceeds the limit
