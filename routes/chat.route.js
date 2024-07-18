@@ -22,6 +22,13 @@ router
   );
 
 router
+  .route("/messages/:userId")
+  .get(
+    validate(chatValidation.getChatsByUserId),
+    chatController.getUnSeenMessages
+  );
+
+router
   .route("/:userId/:creatorId")
   .get(validate(chatValidation.getChatByUsers), chatController.getChatByUsers);
 

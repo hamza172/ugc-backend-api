@@ -7,6 +7,7 @@ const createMessage = {
     senderId: Joi.number().required(),
     chatId: Joi.number().required(),
     offerId: Joi.number().allow(null),
+    seen: Joi.boolean()
   }),
 };
 

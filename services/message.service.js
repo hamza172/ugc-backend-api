@@ -84,6 +84,17 @@ const deleteMessageById = async (messageId) => {
   return deletedMessage;
 };
 
+const markAsSeen = async (messageId) => {
+  try {
+    const updatedMessage = await updateMessageById(messageId, { seen: true });
+    return updatedMessage;
+  } catch (error) {
+    console.error(`Failed to mark message as seen: ${error.message}`);
+    throw error;
+  }
+};
+
+
 module.exports = {
   createMessage,
   queryMessages,
@@ -91,4 +102,5 @@ module.exports = {
   getMessagesByChatId,
   updateMessageById,
   deleteMessageById,
+  markAsSeen,
 };

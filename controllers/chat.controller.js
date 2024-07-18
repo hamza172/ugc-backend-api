@@ -71,6 +71,15 @@ const deleteChat = catchAsync(async (req, res) => {
     .send({ code: httpStatus.OK, Chat: "Chat was succesfully deleted" });
 });
 
+
+const getUnSeenMessages = catchAsync(async (req, res) => {
+
+  let response = await chatService.countUnseenMessages(req.params.userId);
+  res
+    .status(httpStatus.OK)
+    .send({ code: httpStatus.OK, count: response   });
+});
+
 module.exports = {
   createChat,
   getChatByUsers,
@@ -78,4 +87,5 @@ module.exports = {
   getChat,
   updateChat,
   deleteChat,
+  getUnSeenMessages
 };

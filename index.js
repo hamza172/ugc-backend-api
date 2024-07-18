@@ -47,10 +47,10 @@ const port = process.env.PORT || defaultPort;
     const io = socket(server, {
       cors: {
         origin:
-        '*'
-          // process.env.NODE_ENV === "development"
-          //   ? "http://localhost:3000"
-          //   : "https://www.ugc.nl",
+          '*'
+        // process.env.NODE_ENV === "development"
+        //   ? "http://localhost:3000"
+        //   : "https://www.ugc.nl",
       },
     });
     io.on("connection", (socket) => {
@@ -73,6 +73,13 @@ const port = process.env.PORT || defaultPort;
       socket.on("stopTyping", (userId) => {
         socket.broadcast.emit("sendStopTyping", userId);
       });
+
+      socket.on("markAsSeen", async (messageId) => {
+        const updatedMessage = await messageService.markAsSeen(messageId);
+        io.emit("messageSeen", updatedMessage);
+      });
+
+
 
       socket.on("disconnect", () => {
         console.log("Client disconnected:", socket.id);

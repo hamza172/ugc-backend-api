@@ -19,6 +19,9 @@ Message.init(
       type: DataTypes.STRING,
       // allowNull: false,
     },
+    seen: {
+      type: DataTypes.BOOLEAN,
+    },
     attachment: {
       type: DataTypes.STRING,
       allowNull: true,

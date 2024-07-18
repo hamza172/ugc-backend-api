@@ -6,6 +6,7 @@ const { Message, User } = require("../models");
 const { userService } = require("../services/index");
 const Offer = require("../models/offer.model");
 
+
 /**
  * Create a Chat
  * @param {Object} chatBody
@@ -118,6 +119,35 @@ const deleteChatById = async (chatId) => {
   return deletedChat;
 };
 
+const countUnseenMessages = async (userId) => {
+  try {
+    const chats = await Chat.findAll({
+      where: {
+        [Op.or]: [
+          { creatorId: userId },
+          { userId: userId }
+        ]
+      },
+      attributes: ['id']
+    });
+
+    const chatIds = chats.map(chat => chat.id);
+
+    const unseenMessagesCount = await Message.count({
+      where: {
+        chatId: { [Op.in]: chatIds },
+        senderId: { [Op.ne]: userId },
+        seen: false
+      }
+    });
+
+    return unseenMessagesCount;
+  } catch (error) {
+    console.error(`Failed to count unseen messages: ${error.message}`);
+    throw error;
+  }
+};
+
 module.exports = {
   createChat,
   queryChats,
@@ -126,4 +156,5 @@ module.exports = {
   getChatById,
   updateChatById,
   deleteChatById,
+  countUnseenMessages
 };
