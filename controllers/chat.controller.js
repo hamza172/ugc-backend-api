@@ -7,6 +7,11 @@ const { chatService, userService } = require("../services");
 const createChat = catchAsync(async (req, res) => {
   const { creatorId, userId } = req.body;
 
+
+  if (creatorId === userId) {
+    throw new ApiError(httpStatus.EXPECTATION_FAILED, "Error");
+  }
+
   const chat = await chatService.getChatByUsers(creatorId, userId);
 
   if (chat) {
@@ -77,7 +82,7 @@ const getUnSeenMessages = catchAsync(async (req, res) => {
   let response = await chatService.countUnseenMessages(req.params.userId);
   res
     .status(httpStatus.OK)
-    .send({ code: httpStatus.OK, count: response   });
+    .send({ code: httpStatus.OK, count: response });
 });
 
 module.exports = {

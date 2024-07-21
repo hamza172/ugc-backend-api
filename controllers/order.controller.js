@@ -103,6 +103,11 @@ const storage = getStorage();
 const createOrder = catchAsync(async (req, res) => {
   const { body } = req;
 
+
+  if (body.buyerId.toString() === body.creatorId.toString()) {
+    throw new ApiError(httpStatus.EXPECTATION_FAILED, "Error");
+  }
+
   const order = await orderService.createOrder({
     ...body,
     buyerId: Number(body.buyerId),
