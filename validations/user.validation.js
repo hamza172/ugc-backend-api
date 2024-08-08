@@ -53,7 +53,9 @@ const getUsers = {
     niches: Joi.string().allow(null, ''),
     topCreator: Joi.boolean(),
     withVideo: Joi.boolean(),
-    search: Joi.string().allow(null, '')
+    search: Joi.string().allow(null, ''),
+    distance: Joi.number().integer().allow(null),
+    userId: Joi.string().allow(null, ''),
   }),
 };
 

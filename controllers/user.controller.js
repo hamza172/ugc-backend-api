@@ -7,6 +7,7 @@ const { Op, Sequelize } = require("sequelize");
 const Uploader = require("../utils/uploader");
 const { sequelize } = require("../models/user.model");
 const Package = require("../models/package.model");
+const { getCoordinates, getDistance } = require('../middlewares/google')
 
 const createUser = catchAsync(async (req, res) => {
   const user = await userService.createUser(req.body);
@@ -70,6 +71,44 @@ const getUsers = catchAsync(async (req, res) => {
   }
 
   const options = pick(req.query, ["sortBy", "limit", "page"]);
+  if (req.query.distance && req.query.distance !== 0) {
+    const user = await userService.getUserById(req.query.userId);
+    const buyerCoordinates = await getCoordinates(user.dataValues.physicalPostalCode || user.dataValues.postalCode);
+    if (buyerCoordinates) {
+      const page = parseInt(req.query.page, 10) || 1;
+      const limit = parseInt(req.query.limit, 10) || 10;
+      const offset = (page - 1) * limit;
+
+      const allUsers = await userService.queryUsers(filters, { limit: 10000, page: 0 });
+
+      const creatorZipCodes = allUsers.data.map(user => user.dataValues.physicalPostalCode || user.dataValues.postalCode);
+
+      const creatorCoordinates = await Promise.all(creatorZipCodes.map(zip => getCoordinates(zip)));
+      const distances = await getDistance(buyerCoordinates, creatorCoordinates);
+
+      const maxDistance = parseInt(req.query.distance, 10) * 1000;
+
+      const filteredUsers = allUsers.data.filter((_, index) => distances[index].distance.value <= maxDistance);
+
+      const paginatedUsers = filteredUsers.slice(offset, offset + limit);
+      const totalPages = Math.ceil(filteredUsers.length / limit);
+
+      return res.send({
+        data: paginatedUsers,
+        meta: {
+          pagination: {
+            page,
+            pageSize: limit,
+            pageCount: totalPages,
+            total: filteredUsers.length,
+          }
+        }
+      });
+    } else {
+      return res.status(400).send({ message: 'Invalid buyer zip code' });
+    }
+  }
+
   const result = await userService.queryUsers(filters, options);
   res.send(result);
 });
