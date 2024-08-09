@@ -56,6 +56,7 @@ const getUsers = {
     search: Joi.string().allow(null, ''),
     distance: Joi.number().integer().allow(null),
     userId: Joi.string().allow(null, ''),
+    availability: Joi.boolean().allow(null)
   }),
 };
 

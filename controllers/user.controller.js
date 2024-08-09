@@ -27,6 +27,9 @@ const getUsers = catchAsync(async (req, res) => {
     ...(req.query.gender && {
       gender: req.query.gender,
     }),
+    ...(req.query.availability && {
+      availability: true
+    }),
 
     ...(req.query.search && {
       [Op.or]: [

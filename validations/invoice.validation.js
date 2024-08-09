@@ -22,11 +22,14 @@ const getInvoices = {
   query: Joi.object().keys({
     invoiceNumber: Joi.string(),
     sortBy: Joi.string(),
+    fromDate: Joi.string(),
+    toDate: Joi.string(),
     limit: Joi.number().integer(),
     page: Joi.number().integer(),
     userRole: Joi.string(),
     creatorId: Joi.number(),
     buyerId: Joi.number(),
+
 
   }),
 };

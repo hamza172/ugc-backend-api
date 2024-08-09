@@ -150,8 +150,14 @@ const createOrder = catchAsync(async (req, res) => {
 
 const getOrders = catchAsync(async (req, res) => {
   const filter = pick(req.query, ["name", "buyerId", "creatorId"]);
+  let filters = {
+    ...filter,
+    ...((req.query.status && req.query.status !== 'All') && {
+      status: req.query.status,
+    }),
+  }
   const options = pick(req.query, ["sortBy", "limit", "page"]);
-  const result = await orderService.queryOrders(filter, options);
+  const result = await orderService.queryOrders(filters, options);
   res.send(result);
 });
 

@@ -4,6 +4,7 @@ const ApiError = require("../utils/ApiError");
 const catchAsync = require("../utils/catchAsync");
 const { Invoice, LineItem } = require("../models");
 const { invoiceService } = require("../services");
+const { Op } = require("sequelize");
 
 const createInvoice = catchAsync(async (req, res) => {
   const invoiceData = req.body;
@@ -16,11 +17,34 @@ const createInvoice = catchAsync(async (req, res) => {
 });
 
 const getInvoices = catchAsync(async (req, res) => {
+  const { fromDate, toDate } = req.query;
   const filter = pick(req.query, ["invoiceNumber", "buyerId", "creatorId"]);
+
+
+  let filters = {
+    ...filter,
+    ...((fromDate && toDate) && {
+      [Op.and]: [
+        {
+          invoiceDate: {
+            [Op.lte]: new Date(`${toDate}T23:59:59.999Z`),
+          },
+        },
+        {
+          invoiceDate: {
+            [Op.gte]: new Date(`${fromDate}T23:59:59.999Z`),
+          },
+        }
+      ]
+    }),
+  }
+
   const options = pick(req.query, ["sortBy", "limit", "page"]);
-  const invoices = await invoiceService.queryInvoices(filter, options);
+  const invoices = await invoiceService.queryInvoices(filters, options);
+
   res.send(invoices);
 });
+
 
 // const getUserInvoices = catchAsync(async (req, res) => {
 //   const filter = pick(req.query, ["invoiceNumber"]);

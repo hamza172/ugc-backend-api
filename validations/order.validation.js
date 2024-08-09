@@ -27,6 +27,7 @@ const getOrders = {
     creatorId: Joi.number().integer(),
     userRole: Joi.string(),
     userId: Joi.string(),
+    status: Joi.string(),
   }),
 };
 
