@@ -102,6 +102,8 @@ app.use(morgan('tiny'))
 app.use(logger('dev'))
 
 app.use(express.json());
+app.use(bodyParser.json({ limit: '250mb' }));
+app.use(bodyParser.urlencoded({ limit: '250mb', extended: true }));
 
 app.use(cors());
 
