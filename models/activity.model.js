@@ -19,7 +19,7 @@ Activity.init(
         allowNull: true,
       },
       message: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(12000),
         allowNull: true,
       },
       update: {

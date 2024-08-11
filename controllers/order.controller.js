@@ -196,7 +196,7 @@ const updateOrder = catchAsync(async (req, res) => {
       body = {
         ...req.body,
         submittedVideos: uploads,
-        status: 'afgerond'
+        // status: 'afgerond'
       };
     } else {
       body = {
