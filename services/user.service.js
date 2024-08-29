@@ -107,8 +107,8 @@ const getUserByIdMoneySummary = async (creatorId) => {
       [Sequelize.literal(`SUM(CASE WHEN  EXTRACT(MONTH FROM  "order"."createdAt") = 6 THEN "totalAmount" ELSE 0 END)`), 'monthly']
     ],
     where: { creatorId },
-    group: ['user.id'],
-    include: [{ model: User, as: "user" }],
+    // group: ['user.id'],
+    // include: [{ model: User, as: "user" }],
   })
   return user;
 };
