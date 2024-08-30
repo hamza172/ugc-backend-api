@@ -7,7 +7,7 @@ const { Op, Sequelize } = require("sequelize");
 const Uploader = require("../utils/uploader");
 const { sequelize } = require("../models/user.model");
 const Package = require("../models/package.model");
-const { getCoordinates, getDistance } = require('../middlewares/google')
+const { getCoordinates, getDistance } = require('../middlewares/google');
 
 const createUser = catchAsync(async (req, res) => {
   const user = await userService.createUser(req.body);
@@ -215,7 +215,27 @@ const updateUser = catchAsync(async (req, res) => {
 
 const badgeCheck = catchAsync(async (req, res) => {
   const orderData = req.body;
-  console.log('Received order data:', orderData);
+  try {
+    const user = await userService.getUserByEmail(orderData.billing.email)
+    if (user) {
+      orderData.line_items.forEach(async element => {
+        if (element.product_id === 60) {
+          let res = await userService.updateUserById(user.dataValues.id, {
+            blueVerified: true
+          });
+          console.log("Result if Blue Badge: ", res.dataValues)
+        }
+        if (element.product_id === 61) {
+          let res = await userService.updateUserById(user.dataValues.id, {
+            goldVerified: true
+          });
+          console.log("Result if gold Badge: ", res.dataValues)
+        }
+      });
+    }
+  } catch (e) {
+    console.log("error: ", e.message)
+  }
   res.status(200).json({ message: 'Order data received successfully' });
 })
 
