@@ -213,6 +213,12 @@ const updateUser = catchAsync(async (req, res) => {
   });
 });
 
+const badgeCheck = catchAsync(async (req, res) => {
+  const orderData = req.body;
+  console.log('Received order data:', orderData);
+  res.status(200).json({ message: 'Order data received successfully' });
+})
+
 const deleteUser = catchAsync(async (req, res) => {
   await userService.deleteUserById(req.params.userId);
   res
@@ -227,4 +233,5 @@ module.exports = {
   updateUser,
   deleteUser,
   getUserMoneySummary,
+  badgeCheck
 };

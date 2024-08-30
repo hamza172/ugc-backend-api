@@ -146,6 +146,26 @@ User.init(
     topCreator: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
+    },
+    lastSeenSettings: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+    onlineSettings: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+    pushNotificationSettings: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+    blueVerified: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+    goldVerified: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
     }
   },
   {

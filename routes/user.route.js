@@ -25,6 +25,11 @@ router
   )
 
 router
+  .route("/orders-wordpress")
+  .post(
+    userController.badgeCheck
+  )
+router
   .route("/:userId")
   .get(
     // auth(),

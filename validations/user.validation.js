@@ -118,6 +118,9 @@ const updateUser = {
       billingEmail: Joi.string().allow(null),
       isBusiness: Joi.boolean().allow(null),
       useAlternateEmail: Joi.boolean().allow(null),
+      lastSeenSettings: Joi.boolean().allow(null),
+      onlineSettings: Joi.boolean().allow(null),
+      pushNotificationSettings: Joi.boolean().allow(null),
     })
     .min(1),
 };
