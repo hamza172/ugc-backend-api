@@ -196,6 +196,43 @@ const deleteUserById = async (userId) => {
   return deletedUser;
 };
 
+
+const updateUserRankById = async (userId) => {
+  const user = await getUserById(userId);
+  if (!user) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
+  }
+  console.log("User: ", user.dataValues)
+  const successfulOrdersCount = await Order.count({
+    where: { creatorId: userId, status: 'afgerond' },
+  });
+  console.log("successfulOrdersCount", successfulOrdersCount)
+
+  const totalRating = user.dataValues.reviews.reduce((acc, review) => Number(acc) + Number(review.stars), 0);
+  const averageRating = user.dataValues.reviews.length ? totalRating / user.dataValues.reviews.length : 0;
+  console.log("averageRating", averageRating)
+
+  // Determine the rank based on the criteria
+  let newRank = '0'; // Default rank
+
+  if (successfulOrdersCount >= 15 && averageRating >= 4.2) {
+    newRank = '2';
+  } else if (successfulOrdersCount >= 5 && averageRating >= 3.5) {
+    newRank = '1';
+  }
+  console.log('RANKS: ',user.dataValues.rank, newRank)
+  // Update the user's rank if it has changed
+  if (user.dataValues.rank !== newRank) {
+    console.log('newRank', newRank)
+    user.dataValues.rank = newRank;
+    await user.save();
+  }
+
+  return user;
+};
+
+
+
 module.exports = {
   createUser,
   queryUsers,
@@ -204,5 +241,6 @@ module.exports = {
   updateUserById,
   deleteUserById,
   getUserByIdMoneySummary,
-  validateEmail
+  validateEmail,
+  updateUserRankById
 };

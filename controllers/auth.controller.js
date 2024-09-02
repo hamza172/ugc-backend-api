@@ -9,6 +9,9 @@ const {
   uploadService,
 } = require("../services");
 const Uploader = require("../utils/uploader");
+const { send2factorAuthenticationToken } = require("../services/email.service");
+const speakeasy = require('speakeasy');
+
 
 const register = catchAsync(async (req, res) => {
   let User;
@@ -97,8 +100,45 @@ const login = catchAsync(async (req, res) => {
   const { email, password } = req.body;
 
   const user = await authService.loginUserWithEmailAndPassword(email, password);
-  const tokens = await tokenService.generateAuthTokens(user);
+  if (!user) {
+    return res.status(400).send({ message: 'User doesnt Exist.' });
+  }
+  if (!user.FAToken) {
+    const secret = speakeasy.generateSecret({ length: 20 });
+    await userService.updateUserById(user.id, { FAToken: secret.base32 });
+    user.FAToken = secret.base32; 
+  }
 
+  const token = speakeasy.totp({
+    secret: user.FAToken,
+    encoding: 'base32',
+    step: 300
+  });
+  let updatedUser = await userService.updateUserById(user.id, { FAToken: user.FAToken });
+
+  let emailSend = await send2factorAuthenticationToken(email, token)
+
+  res.send({ message: '2FA token sent to your email. Please verify to continue.', userId: user.id });
+
+});
+
+
+const verify2FA = catchAsync(async (req, res) => {
+  const { userId, token } = req.body;
+
+  const user = await userService.getUserById(userId);
+  const isTokenValid = speakeasy.totp.verify({
+    secret: user.dataValues.FAToken,
+    encoding: 'base32',
+    token: token, 
+    step: 300, 
+    window: 1 
+  });
+
+  if (!isTokenValid) {
+    return res.status(400).send({ message: 'Wrong or Expired Token' });
+  }
+  const tokens = await tokenService.generateAuthTokens(user);
   res.send({ user, tokens });
 });
 
@@ -154,5 +194,6 @@ module.exports = {
   sendVerificationEmail,
   verifyEmail,
   changePassword,
-  validateEmail
+  validateEmail,
+  verify2FA
 };

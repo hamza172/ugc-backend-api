@@ -101,6 +101,10 @@ User.init(
       type: DataTypes.ENUM("creator", "user", "admin", "company"),
       defaultValue: "creator",
     },
+    rank: {
+      type: DataTypes.ENUM('2', '1', '0'),
+      defaultValue: "0",
+    },
     video1: {
       type: DataTypes.STRING(1000),
     },
@@ -166,7 +170,10 @@ User.init(
     goldVerified: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
-    }
+    },
+    FAToken: {
+      type: DataTypes.STRING(1000),
+    },
   },
   {
     sequelize,

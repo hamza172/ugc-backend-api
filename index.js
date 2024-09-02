@@ -16,7 +16,7 @@ const logger = require('morgan')
 const socket = require("socket.io");
 const http = require("http");
 const { messageService } = require("./services");
-
+require('./scheduled')
 const swaggerDefinition = {
   openapi: "3.0.0",
   info: {
@@ -53,8 +53,11 @@ const port = process.env.PORT || defaultPort;
         //   : "https://www.ugc.nl",
       },
     });
+    const users = {};
     io.on("connection", (socket) => {
-      console.log("Client connected:", socket.id);
+      // console.log("Client connected:", socket.id);
+      // users[socket.id] = { online: true, lastOnline: null };
+      // io.emit("userStatus", { userId: socket.id, status: 'online' });
 
       socket.on("sendMessage", async (message) => {
         const newMessage = await messageService.createMessage(message);

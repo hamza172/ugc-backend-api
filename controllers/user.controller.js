@@ -7,6 +7,8 @@ const { Op, Sequelize } = require("sequelize");
 const Uploader = require("../utils/uploader");
 const { sequelize } = require("../models/user.model");
 const Package = require("../models/package.model");
+const Review = require("../models/review.model");
+const Order = require("../models/order.model");
 const { getCoordinates, getDistance } = require('../middlewares/google');
 
 const createUser = catchAsync(async (req, res) => {
@@ -15,9 +17,7 @@ const createUser = catchAsync(async (req, res) => {
 });
 
 const getUsers = catchAsync(async (req, res) => {
-  const filter = pick(req.query, ["name", "role", "niches", 'topCreator']);
-  console.log(req.query)
-
+  const filter = pick(req.query, ["name", "role", "niches", "topCreator"]);
   const currentDate = new Date();
   const ageDate = new Date(currentDate.setFullYear(currentDate.getFullYear() - req.query.age));
 
@@ -28,18 +28,16 @@ const getUsers = catchAsync(async (req, res) => {
       gender: req.query.gender,
     }),
     ...(req.query.availability && {
-      availability: true
+      availability: true,
     }),
-
     ...(req.query.search && {
       [Op.or]: [
         { firstName: { [Op.like]: `%${req.query.search}%` } },
         { lastName: { [Op.like]: `%${req.query.search}%` } },
         { niches: { [Op.like]: `%${req.query.search}%` } },
         { languages: { [Op.like]: `%${req.query.search}%` } },
-      ]
+      ],
     }),
-
     ...(req.query.age && {
       dayOfBirth: {
         [Op.lte]: ageDate,
@@ -47,7 +45,6 @@ const getUsers = catchAsync(async (req, res) => {
     }),
     ...(req.query.niches && {
       niches: {
-        // [Op.contains]: [req.query.niches],
         [Op.like]: `%${req.query.niches}%`,
       },
     }),
@@ -65,18 +62,33 @@ const getUsers = catchAsync(async (req, res) => {
 
   if (req.query.price) {
     const priceFilters = {
-      '50-100': { [Op.between]: [50, 100] },
-      '100-200': { [Op.between]: [100, 200] },
-      '200+': { [Op.gte]: 200 },
+      "50-100": { [Op.between]: [50, 100] },
+      "100-200": { [Op.between]: [100, 200] },
+      "200+": { [Op.gte]: 200 },
     };
 
-    filters['$packages.totalCost$'] = priceFilters[req.query.price];
+    filters["$packages.totalCost$"] = priceFilters[req.query.price];
   }
 
-  const options = pick(req.query, ["sortBy", "limit", "page"]);
+  const options = pick(req.query, ["limit", "page", "sortBy"]);
+
+  if (req.query.sortBy) {
+    const sortFields = {
+      "reviewStars": sequelize.literal('averageReviewStars'),
+      "orders": sequelize.literal('orderCount')
+    };
+    const order = sortFields[req.query.sortBy]
+    options.order = [
+      [sequelize.literal("goldVerified"), 'DESC'],  
+      [sequelize.literal("blueVerified"), 'DESC'],   
+      [sequelize.literal('CAST(rank AS UNSIGNED)'), 'DESC'], 
+      [order, 'DESC']];
+  }
+
   if (req.query.distance && req.query.distance !== 0) {
     const user = await userService.getUserById(req.query.userId);
     const buyerCoordinates = await getCoordinates(user.dataValues.physicalPostalCode || user.dataValues.postalCode);
+
     if (buyerCoordinates) {
       const page = parseInt(req.query.page, 10) || 1;
       const limit = parseInt(req.query.limit, 10) || 10;
@@ -104,15 +116,37 @@ const getUsers = catchAsync(async (req, res) => {
             pageSize: limit,
             pageCount: totalPages,
             total: filteredUsers.length,
-          }
-        }
+          },
+        },
       });
     } else {
-      return res.status(400).send({ message: 'Invalid buyer zip code' });
+      return res.status(400).send({ message: "Invalid buyer zip code" });
     }
   }
 
-  const result = await userService.queryUsers(filters, options);
+  const result = await userService.queryUsers(filters, {
+    ...options,
+    include: [
+      {
+        model: Review,
+        attributes: [],
+        required: false,
+      },
+      {
+        model: Order,
+        attributes: [],
+        required: false,
+      },
+    ],
+    attributes: {
+      include: [
+        [sequelize.fn("AVG", sequelize.col("reviews.stars")), "averageReviewStars"],
+        [sequelize.fn("COUNT", sequelize.col("orders.id")), "orderCount"],
+      ],
+    },
+    group: ["user.id"],
+  });
+
   res.send(result);
 });
 

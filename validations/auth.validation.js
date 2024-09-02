@@ -26,6 +26,14 @@ const login = {
   }),
 };
 
+const twoFactor = {
+  body: Joi.object().keys({
+    token: Joi.string().required(),
+    userId: Joi.string().required(),
+  }),
+};
+
+
 const logout = {
   body: Joi.object().keys({
     refreshToken: Joi.string().required(),
@@ -74,5 +82,6 @@ module.exports = {
   forgotPassword,
   resetPassword,
   verifyEmail,
-  changePassword
+  changePassword,
+  twoFactor
 };
