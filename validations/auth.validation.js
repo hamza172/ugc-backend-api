@@ -33,6 +33,12 @@ const twoFactor = {
   }),
 };
 
+const resendLogin = {
+  body: Joi.object().keys({
+    userId: Joi.string().required(),
+  }),
+};
+
 
 const logout = {
   body: Joi.object().keys({

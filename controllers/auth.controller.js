@@ -116,9 +116,36 @@ const login = catchAsync(async (req, res) => {
   });
   let updatedUser = await userService.updateUserById(user.id, { FAToken: user.FAToken });
 
-  let emailSend = await send2factorAuthenticationToken(email, token)
+  let emailSend = await send2factorAuthenticationToken(email, token, user.firstName)
 
   res.send({ message: '2FA token sent to your email. Please verify to continue.', userId: user.id });
+
+});
+
+
+const loginResend = catchAsync(async (req, res) => {
+  const { userId } = req.body;
+
+  const user = await userService.getUserById(userId);
+  if (!user) {
+    return res.status(400).send({ message: 'User doesnt Exist.' });
+  }
+  if (!user.dataValues.FAToken) {
+    const secret = speakeasy.generateSecret({ length: 20 });
+    await userService.updateUserById(user.dataValues.id, { FAToken: secret.base32 });
+    user.dataValues.FAToken = secret.base32; 
+  }
+
+  const token = speakeasy.totp({
+    secret: user.dataValues.FAToken,
+    encoding: 'base32',
+    step: 300
+  });
+  let updatedUser = await userService.updateUserById(user.dataValues.id, { FAToken: user.dataValues.FAToken });
+
+  let emailSend = await send2factorAuthenticationToken(user.dataValues.email, token, user.dataValues.firstName)
+
+  res.send({ message: '2FA token sent to your email. Please verify to continue.', userId: user.dataValues.id });
 
 });
 
@@ -138,8 +165,8 @@ const verify2FA = catchAsync(async (req, res) => {
   if (!isTokenValid) {
     return res.status(400).send({ message: 'Wrong or Expired Token' });
   }
-  const tokens = await tokenService.generateAuthTokens(user);
-  res.send({ user, tokens });
+  const tokens = await tokenService.generateAuthTokens(user.dataValues);
+  res.send({ user:user.dataValues, tokens });
 });
 
 const logout = catchAsync(async (req, res) => {
@@ -195,5 +222,6 @@ module.exports = {
   verifyEmail,
   changePassword,
   validateEmail,
-  verify2FA
+  verify2FA,
+  loginResend
 };

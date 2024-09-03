@@ -45,6 +45,7 @@ router.post(
  *     description: Create a new profiel for a user
  */
 router.post("/login", validate(authValidation.login), authController.login);
+router.post("/login-resend", validate(authValidation.resendLogin), authController.loginResend);
 router.post("/two-factor-authentication", validate(authValidation.twoFactor), authController.verify2FA);
 router.post("/logout", validate(authValidation.logout), authController.logout);
 router.post(
