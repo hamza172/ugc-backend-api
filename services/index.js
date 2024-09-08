@@ -12,3 +12,5 @@ module.exports.reviewService = require("./review.service");
 module.exports.requestService = require("./request.service");
 module.exports.offerService = require("./offers.service");
 module.exports.invoiceService = require("./invoice.service");
+module.exports.notificationService = require("./notfiications.service")
+module.exports.onesignalService = require("./onesignal.service")

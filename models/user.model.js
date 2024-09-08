@@ -174,6 +174,17 @@ User.init(
     FAToken: {
       type: DataTypes.STRING(1000),
     },
+    oneSignal: {
+      type: DataTypes.STRING(1000),
+    },
+    status: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+    lastActivity: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    }
   },
   {
     sequelize,

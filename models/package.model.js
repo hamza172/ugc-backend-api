@@ -8,6 +8,7 @@ const Review = require("./review.model");
 const Offer = require("./offer.model");
 const Activity = require("./activity.model");
 const { LineItem, Invoice } = require("./invoice.model");
+const Notifications = require("./notifications.model");
 
 class Package extends Model { }
 
@@ -127,7 +128,9 @@ Package.init(
 );
 
 Package.belongsTo(User);
+Notifications.belongsTo(User);
 User.hasMany(Package);
+User.hasMany(Notifications);
 Message.belongsTo(Chat);
 Chat.hasMany(Message);
 Chat.belongsTo(User, {

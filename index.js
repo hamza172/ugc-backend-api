@@ -15,7 +15,7 @@ const morgan = require('morgan')
 const logger = require('morgan')
 const socket = require("socket.io");
 const http = require("http");
-const { messageService } = require("./services");
+const { messageService, userService, chatService, notificationService } = require("./services");
 require('./scheduled')
 const swaggerDefinition = {
   openapi: "3.0.0",
@@ -54,10 +54,30 @@ const port = process.env.PORT || defaultPort;
       },
     });
     const users = {};
-    io.on("connection", (socket) => {
-      // console.log("Client connected:", socket.id);
-      // users[socket.id] = { online: true, lastOnline: null };
-      // io.emit("userStatus", { userId: socket.id, status: 'online' });
+    io.on("connection", async (socket) => {
+      const userId = socket.handshake.query.userId;
+      if (userId) {
+        let updatedUser = await userService.updateUserById(userId, { status: true, lastActivity: new Date() })
+        io.emit("userStatus", { userId, status: true });
+      }
+
+      socket.on("disconnect", async () => {
+
+        if (userId) {
+          await userService.updateUserById(userId, { status: false, lastActivity: new Date() });
+          io.emit("userStatus", { userId, status: false });
+        }
+      });
+      socket.on('get-chats', async (userId) => {
+        const chats = await chatService.getChatsByUserId(userId);
+        io.emit('chats', chats)
+      });
+
+      socket.on('get-notifications', async (userId) => {
+        const notifications = await notificationService.getNotificationsByUserId(userId);
+        io.emit('notifications', notifications)
+      });
+
 
       socket.on("sendMessage", async (message) => {
         const newMessage = await messageService.createMessage(message);

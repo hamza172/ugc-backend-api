@@ -14,6 +14,9 @@ const invoicesRoutes = require("./invoice.route");
 const webhookRoutes = require("./webhook.route");
 const contactRoutes = require("./contact.route");
 const activityRoutes = require("./activity.route");
+const notificationsRoutes = require("./notifications.route");
+const oneSignalRoutes = require("./onesignalPush.route");
+
 
 const router = express.Router();
 
@@ -77,6 +80,14 @@ const defaultRoutes = [
   {
     path: "/acitivity",
     route: activityRoutes,
+  },
+  {
+    path: "/notifications",
+    route: notificationsRoutes,
+  },
+  {
+    path: "/onesignal",
+    route: oneSignalRoutes,
   },
 ];
 
