@@ -1,28 +1,31 @@
-const ApiError = require("../utils/ApiError");
-const httpStatus = require("http-status");
+const { default: axios } = require("axios");
+const OneSignal = require('onesignal-node');
 
-/**
- * Send notification to specific users using OneSignal API
- * @param {string[]} playerIds
- * @param {Object} notificationData
- * @returns {Promise<void>}
- */
-const sendNotification = async (playerIds, notificationData) => {
-    const OneSignal = require('onesignal-node');
+const client = new OneSignal.Client(process.env.ONESIGNAL_APP_ID, process.env.ONESIGNAL_API_KEY);
 
-    const client = new OneSignal.Client(process.env.ONESIGNAL_APP_ID, process.env.ONESIGNAL_SAFARI_WEB_ID);
 
+const sendNotification = async (id, heading, content) => {
     const notification = {
-        contents: notificationData.contents, 
-        headings: notificationData.headings, 
-        include_player_ids: playerIds, 
+        contents: {
+            en: content
+        },
+        "target_channel": "push",
+        headings: { en: heading },
+        include_aliases: {
+            external_id: [
+                id,
+            ],
+        },
     };
+    client.createNotification(notification)
+        .then(response => {
+            console.log("Success", response)
+        })
+        .catch(e => {
+            console.log("error: ", e.message)
+        });
 
-    try {
-        await client.createNotification(notification);
-    } catch (error) {
-        throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Failed to send notification");
-    }
+
 };
 
 module.exports = {

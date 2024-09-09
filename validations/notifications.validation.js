@@ -4,7 +4,8 @@ const { objectId } = require("./custom.validation");
 const createNotification = {
   body: Joi.object().keys({
     userId: Joi.number().required(),
-    text: Joi.string().required(),
+    title: Joi.string().required(),
+    text: Joi.string().allow(null || ''),
     orderId: Joi.number().required(),
   }),
 };
