@@ -47,7 +47,7 @@ const send2factorAuthenticationToken = async (to, token, firstName) => {
     const msg = {
         to,
         from: "no-reply@ugc.nl",
-        subject: "Bedankt voor je registratie! | UGC.nl",
+        subject: "Je verificatiecode | UGC.nl",
         html: html.replace("{firstname}", firstName)
             .replace('{pin1}',token[0])
             .replace('{pin2}',token[1])
