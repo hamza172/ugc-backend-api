@@ -1,6 +1,7 @@
 const ApiError = require("../utils/ApiError");
 const httpStatus = require("http-status");
 const Notifications = require("../models/notifications.model");
+const { sendNotification } = require("./onesignal.service");
 
 /**
  * Create a notification
@@ -8,6 +9,7 @@ const Notifications = require("../models/notifications.model");
  * @returns {Promise<Notifications>}
  */
 const createNotification = async (notificationBody) => {
+    sendNotification(notificationBody.userId,notificationBody.title,notificationBody.text )
     return await Notifications.create(notificationBody);
 };
 
