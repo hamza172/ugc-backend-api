@@ -16,9 +16,9 @@ let VideoFileSizeLimit = process.env.VIDEO_SIZE || (10 * 1024 * 1024)
  * @param {"aws_s3"|"firebase"} [params.location=""] - The location string. Can be "x" or "y".
  * @param {File} params.file - The file object.
  */
-const UploadFile = ({ location = DefaultPlatform, file }) => {
+const UploadFile = ({ location = DefaultPlatform, file, onProgress }) => {
   if (location === "aws_s3") {
-    return S3Uploader(file);
+    return S3Uploader(file, onProgress);
   } else {
     return FireBaseUploader(file);
   }

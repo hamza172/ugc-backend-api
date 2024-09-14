@@ -4,7 +4,7 @@ const { fromIni, fromEnv } = require("@aws-sdk/credential-providers");
 
 const credentials = fromIni({ profile: "s3_login" });
 
-const fileUpload = async (file) => {
+const fileUpload = async (file, onProgress) => {
   if (!file) return null;
 
   // Generate a unique name for the file
@@ -20,7 +20,7 @@ const fileUpload = async (file) => {
   const s3 = new S3Client({ region: s3BucketRegion, credentials: fromEnv() });
 
   try {
-    // Set up the upload parameters
+    // Set up the upload parameters with progress tracking
     const uploadParams = new Upload({
       client: s3,
       params: {
@@ -29,6 +29,17 @@ const fileUpload = async (file) => {
         Body: file.buffer,
         ContentType: file.mimetype,
       },
+      // Optional: Track the progress of the upload
+      queueSize: 1,
+      leavePartsOnError: false,
+    });
+
+    // Handle progress updates
+    uploadParams.on('httpUploadProgress', (progress) => {
+      if (onProgress && progress.total) {
+        const percentage = Math.round((progress.loaded / progress.total) * 100);
+        onProgress(percentage); // Call the progress callback
+      }
     });
 
     // Perform the upload
@@ -42,4 +53,5 @@ const fileUpload = async (file) => {
   }
 };
 
+module.exports = fileUpload;
 module.exports = fileUpload;

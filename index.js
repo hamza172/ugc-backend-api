@@ -37,23 +37,35 @@ app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 const defaultPort = 3000;
 const port = process.env.PORT || defaultPort;
 
+const server = http.createServer(app);
+const io = socket(server, {
+  cors: {
+    origin:
+      '*'
+    // process.env.NODE_ENV === "development"
+    //   ? "http://localhost:3000"
+    //   : "https://www.ugc.nl",
+  },
+});
+
+
+app.use("/api/v1/stripe/webhook", express.raw({ type: "application/json" }));
+app.use(morgan('tiny'))
+app.use(logger('dev'))
+
+app.use(express.json());
+
+app.post('/upload-progress', (req, res) => {
+  console.log("ASD", req.body)
+  io.emit('uploadProgress', req.body);
+  res.sendStatus(200);
+});
+
 (async function () {
   try {
     // await sequelize.sync();
     await sequelize.sync({ alter: true });
     console.log("✅✅✅ Database sync complete.");
-
-    const server = http.createServer(app);
-    const io = socket(server, {
-      cors: {
-        origin:
-          '*'
-        // process.env.NODE_ENV === "development"
-        //   ? "http://localhost:3000"
-        //   : "https://www.ugc.nl",
-      },
-    });
-    const users = {};
     io.on("connection", async (socket) => {
       const userId = socket.handshake.query.userId;
       if (userId) {
@@ -120,11 +132,6 @@ const port = process.env.PORT || defaultPort;
   }
 })();
 
-app.use("/api/v1/stripe/webhook", express.raw({ type: "application/json" }));
-app.use(morgan('tiny'))
-app.use(logger('dev'))
-
-app.use(express.json());
 app.use(bodyParser.json({ limit: '250mb' }));
 app.use(bodyParser.urlencoded({ limit: '250mb', extended: true }));
 

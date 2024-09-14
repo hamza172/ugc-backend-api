@@ -3,10 +3,9 @@ const pick = require("../utils/pick");
 const ApiError = require("../utils/ApiError");
 const catchAsync = require("../utils/catchAsync");
 const { userService } = require("../services");
-const { Op, Sequelize } = require("sequelize");
+const { Op } = require("sequelize");
 const Uploader = require("../utils/uploader");
 const { sequelize } = require("../models/user.model");
-const Package = require("../models/package.model");
 const Review = require("../models/review.model");
 const Order = require("../models/order.model");
 const { getCoordinates, getDistance } = require('../middlewares/google');
@@ -79,9 +78,9 @@ const getUsers = catchAsync(async (req, res) => {
     };
     const order = sortFields[req.query.sortBy]
     options.order = [
-      [sequelize.literal("goldVerified"), 'DESC'],  
-      [sequelize.literal("blueVerified"), 'DESC'],   
-      [sequelize.literal('CAST(rank AS UNSIGNED)'), 'DESC'], 
+      [sequelize.literal("goldVerified"), 'DESC'],
+      [sequelize.literal("blueVerified"), 'DESC'],
+      [sequelize.literal('CAST(rank AS UNSIGNED)'), 'DESC'],
       [order, 'DESC']];
   }
 
@@ -171,7 +170,30 @@ const updateUser = catchAsync(async (req, res) => {
   } else {
 
     const { profilePicture, video1, video2, video3, video4 } = req.files;
-    console.log(req.files)
+
+    let uploadProgress = {
+      video1: 0,
+      video2: 0,
+      video3: 0,
+      video4: 0,
+    };
+
+    const emitProgress = async (fileType, progress) => {
+      uploadProgress[fileType] = progress;
+      try {
+        await fetch('http://localhost:8080/upload-progress', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(uploadProgress),
+        });
+      } catch (error) {
+        console.error('Error sending progress:', error);
+      }
+    };
+
+
     let profileLink = null;
     if (profilePicture) {
       profileLink = await Uploader({
@@ -192,6 +214,7 @@ const updateUser = catchAsync(async (req, res) => {
         location: "aws_s3",
         file: video1[0],
         // sizeLimit: true,
+        onProgress: (progress) => emitProgress('video1', progress),
       });
       // await Uploader({ location: "firebase", file: video1 });
     }
@@ -201,6 +224,7 @@ const updateUser = catchAsync(async (req, res) => {
         location: "aws_s3",
         file: video2[0],
         // sizeLimit: true,
+        onProgress: (progress) => emitProgress('video2', progress),
       });
     }
     if (video3) {
@@ -209,6 +233,7 @@ const updateUser = catchAsync(async (req, res) => {
         location: "aws_s3",
         file: video3[0],
         // sizeLimit: true,
+        onProgress: (progress) => emitProgress('video3', progress),
       });
     }
     if (video4) {
@@ -217,6 +242,7 @@ const updateUser = catchAsync(async (req, res) => {
         location: "aws_s3",
         file: video4[0],
         // sizeLimit: true,
+        onProgress: (progress) => emitProgress('video4', progress),
       });
     }
     //-----------------------------------------------------------------------------
