@@ -101,13 +101,13 @@ app.post('/upload-progress', (req, res) => {
       });
 
 
-      socket.on("typing", (userId) => {
-        socket.broadcast.emit("sendTyping", userId);
-      });
+      // socket.on("typing", (userId) => {
+      //   socket.broadcast.emit("sendTyping", userId);
+      // });
 
-      socket.on("stopTyping", (userId) => {
-        socket.broadcast.emit("sendStopTyping", userId);
-      });
+      // socket.on("stopTyping", (userId) => {
+      //   socket.broadcast.emit("sendStopTyping", userId);
+      // });
 
       socket.on("markAsSeen", async (messageId) => {
         const updatedMessage = await messageService.markAsSeen(messageId);
