@@ -82,12 +82,12 @@ app.post('/upload-progress', (req, res) => {
       });
       socket.on('get-chats', async (userId) => {
         const chats = await chatService.getChatsByUserId(userId);
-        io.emit('chats', chats)
+        socket.emit('chats', chats)
       });
 
       socket.on('get-notifications', async (userId) => {
         const notifications = await notificationService.getNotificationsByUserId(userId);
-        io.emit('notifications', notifications)
+        socket.emit('notifications', notifications)
       });
 
 
