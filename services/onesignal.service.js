@@ -5,6 +5,7 @@ const client = new OneSignal.Client(process.env.ONESIGNAL_APP_ID, process.env.ON
 
 
 const sendNotification = async (id, heading, content) => {
+    console.log(id)
     const notification = {
         contents: {
             en: content
@@ -12,9 +13,7 @@ const sendNotification = async (id, heading, content) => {
         "target_channel": "push",
         headings: { en: heading },
         include_aliases: {
-            external_id: [
-                id,
-            ],
+            external_id: [id.toString()],
         },
     };
     client.createNotification(notification)

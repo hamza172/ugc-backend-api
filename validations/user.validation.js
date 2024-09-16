@@ -11,7 +11,7 @@ const createUser = {
     lastName: Joi.string().required(),
     companyName: Joi.string(),
     ccn: Joi.string(),
-    btwNumber: Joi.string().allow(null,''),
+    btwNumber: Joi.string().allow(null, ''),
     dayOfBirth: Joi.string(),
     gender: Joi.string(),
     street: Joi.string(),
@@ -67,6 +67,12 @@ const getUser = {
   }),
 };
 
+const uploadFile = {
+  body: Joi.object()
+    .keys({
+      video1: Joi.any(),
+    })
+}
 
 const updateUser = {
   params: Joi.object().keys({
@@ -137,5 +143,6 @@ module.exports = {
   getUser,
   updateUser,
   deleteUser,
-  validateEmail
+  validateEmail,
+  uploadFile
 };

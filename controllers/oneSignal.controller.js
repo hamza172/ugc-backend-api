@@ -6,18 +6,15 @@ const { onesignalService } = require("../services");
 /**
  * Send notification to specific users
  */
-const sendNotification = catchAsync(async (req, res) => {
-    const { playerIds, notificationData } = req.body;
+const sendNotificationController = catchAsync(async (req, res) => {
+    const { playerId, heading, content } = req.body;
 
-    if (!playerIds || playerIds.length === 0) {
+    if (!playerId) {
         throw new ApiError(httpStatus.BAD_REQUEST, "No player IDs provided");
     }
-
-    if (!notificationData || !notificationData.contents || !notificationData.headings) {
-        throw new ApiError(httpStatus.BAD_REQUEST, "Invalid notification data");
-    }
-
-    await onesignalService.sendNotification(playerIds, notificationData);
+    
+    console.log(playerId, heading, content)
+    await onesignalService.sendNotification(playerId, heading, content);
 
     res.status(httpStatus.OK).send({
         code: httpStatus.OK,
@@ -26,5 +23,5 @@ const sendNotification = catchAsync(async (req, res) => {
 });
 
 module.exports = {
-    sendNotification,
+    sendNotificationController,
 };

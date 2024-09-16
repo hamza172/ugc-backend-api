@@ -163,6 +163,54 @@ const getUser = catchAsync(async (req, res) => {
   res.send({ code: httpStatus.OK, message: "Got user !", user });
 });
 
+const uploadFile = catchAsync(async (req, res) => {
+  console.log(req.files)
+  if (!req.files || Object.keys(req.files).length === 0) {
+    return res.status(400).send({
+      code: httpStatus.BAD_REQUEST,
+      message: 'No files were uploaded.',
+    });
+  }
+  console.log("HERER",req.body)
+  const { video1 } = req.files;
+
+  const emitProgress = async (progress) => {
+    try {
+      await fetch('http://localhost:8080/upload-progress', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({uploadProgress: progress, name: req.body.name}),
+      });
+    } catch (error) {
+      console.error('Error sending progress:', error);
+    }
+  };
+
+  try {
+    const fileUrl = await Uploader({
+      location: 'aws_s3',
+      file: video1[0],
+      onProgress: (progress) => emitProgress(progress),
+    });
+
+    res.status(200).send({
+      code: httpStatus.OK,
+      message: 'File uploaded successfully!',
+      fileUrl,
+    });
+
+  } catch (error) {
+    console.error('Error uploading file:', error);
+    res.status(500).send({
+      code: httpStatus.INTERNAL_SERVER_ERROR,
+      message: 'Failed to upload file.',
+    });
+  }
+});
+
+
 const updateUser = catchAsync(async (req, res) => {
   let user
   if (!(req.files && Object.keys(req.files).length >= 1)) {
@@ -313,5 +361,6 @@ module.exports = {
   updateUser,
   deleteUser,
   getUserMoneySummary,
-  badgeCheck
+  badgeCheck,
+  uploadFile
 };

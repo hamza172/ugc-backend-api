@@ -57,7 +57,7 @@ app.use(express.json());
 
 app.post('/upload-progress', (req, res) => {
   console.log("ASD", req.body)
-  io.emit('uploadProgress', req.body);
+  io.emit(req.body.name, req.body);
   res.sendStatus(200);
 });
 

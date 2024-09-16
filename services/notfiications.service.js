@@ -9,7 +9,7 @@ const { sendNotification } = require("./onesignal.service");
  * @returns {Promise<Notifications>}
  */
 const createNotification = async (notificationBody) => {
-    sendNotification(notificationBody.userId,notificationBody.title,notificationBody.text )
+    sendNotification(notificationBody.userId, notificationBody.title, notificationBody.text)
     return await Notifications.create(notificationBody);
 };
 

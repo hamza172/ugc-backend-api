@@ -29,6 +29,17 @@ router
   .post(
     userController.badgeCheck
   )
+
+
+router
+  .route('/upload')
+  .post(
+    upload.fields([
+      { name: "video1", maxCount: 1 }
+    ]),
+    // validate(userValidation.uploadFile),
+    userController.uploadFile
+  )
 router
   .route("/:userId")
   .get(

@@ -14,7 +14,7 @@ router
     .post(
         // auth(),
         validate(onesignalValidation.sendNotification),
-        onesignalController.sendNotification
+        onesignalController.sendNotificationController
     );
 
 module.exports = router;
