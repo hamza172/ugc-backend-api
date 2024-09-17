@@ -327,13 +327,13 @@ const badgeCheck = catchAsync(async (req, res) => {
     const user = await userService.getUserByEmail(orderData.billing.email)
     if (user) {
       orderData.line_items.forEach(async element => {
-        if (element.product_id === 60) {
+        if (element.product_id === 209) {
           let res = await userService.updateUserById(user.dataValues.id, {
             blueVerified: true
           });
           console.log("Result if Blue Badge: ", res.dataValues)
         }
-        if (element.product_id === 61) {
+        if (element.product_id === 214) {
           let res = await userService.updateUserById(user.dataValues.id, {
             goldVerified: true
           });
