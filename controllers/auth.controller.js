@@ -163,7 +163,7 @@ const verify2FA = catchAsync(async (req, res) => {
   });
 
   if (!isTokenValid) {
-    return res.status(400).send({ message: 'Wrong or Expired Token' });
+    return res.status(400).send({ message: 'Verkeerde code' });
   }
   const tokens = await tokenService.generateAuthTokens(user.dataValues);
   res.send({ user:user.dataValues, tokens });

@@ -22,6 +22,25 @@ const sendBuyerRegistrationConfirmationEmail = async (to, user) => {
 
     return email;
 };
+
+const sendUserDeleteEmail = async (to, user, reason) => {
+    const html = fs.readFileSync(
+        path.join(__dirname, "../deleteAccountEmail.html"),
+        "utf8"
+    );
+    const msg = {
+        to,
+        from: "no-reply@ugc.nl",
+        subject: "Account Deletion",
+        html: html.replace("{AccountType}", user.role)
+            .replace("{Reason}", reason),
+    };
+
+    const email = await sendGrid.send(msg);
+
+    return email;
+};
+
 const sendCreatorRegistrationConfirmationEmail = async (to, user) => {
     const html = fs.readFileSync(
         path.join(__dirname, "../registration-confirmation-1.html"),
@@ -49,12 +68,12 @@ const send2factorAuthenticationToken = async (to, token, firstName) => {
         from: "no-reply@ugc.nl",
         subject: "Je verificatiecode | UGC.nl",
         html: html.replace("{firstname}", firstName)
-            .replace('{pin1}',token[0])
-            .replace('{pin2}',token[1])
-            .replace('{pin3}',token[2])
-            .replace('{pin4}',token[3])
-            .replace('{pin5}',token[4])
-            .replace('{pin6}',token[5])
+            .replace('{pin1}', token[0])
+            .replace('{pin2}', token[1])
+            .replace('{pin3}', token[2])
+            .replace('{pin4}', token[3])
+            .replace('{pin5}', token[4])
+            .replace('{pin6}', token[5])
     };
 
     const email = await sendGrid.send(msg);
@@ -67,5 +86,6 @@ module.exports = {
     // sendResetPasswordEmail,
     sendBuyerRegistrationConfirmationEmail,
     sendCreatorRegistrationConfirmationEmail,
-    send2factorAuthenticationToken
+    send2factorAuthenticationToken,
+    sendUserDeleteEmail
 };

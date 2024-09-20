@@ -9,6 +9,7 @@ const { sequelize } = require("../models/user.model");
 const Review = require("../models/review.model");
 const Order = require("../models/order.model");
 const { getCoordinates, getDistance } = require('../middlewares/google');
+const { sendUserDeleteEmail } = require("../services/email.service");
 
 const createUser = catchAsync(async (req, res) => {
   const user = await userService.createUser(req.body);
@@ -171,7 +172,7 @@ const uploadFile = catchAsync(async (req, res) => {
       message: 'No files were uploaded.',
     });
   }
-  console.log("HERER",req.body)
+  console.log("HERER", req.body)
   const { video1 } = req.files;
 
   const emitProgress = async (progress) => {
@@ -181,7 +182,7 @@ const uploadFile = catchAsync(async (req, res) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({uploadProgress: progress, name: req.body.name}),
+        body: JSON.stringify({ uploadProgress: progress, name: req.body.name }),
       });
     } catch (error) {
       console.error('Error sending progress:', error);
@@ -348,7 +349,10 @@ const badgeCheck = catchAsync(async (req, res) => {
 })
 
 const deleteUser = catchAsync(async (req, res) => {
+  const { reason } = req.body;
+  let userData = await userService.getUserById(req.params.userId)
   await userService.deleteUserById(req.params.userId);
+  sendUserDeleteEmail('mail@jan-hein.com', userData.dataValues, reason)
   res
     .status(httpStatus.OK)
     .send({ code: httpStatus.OK, message: "User was succesfully deleted" });

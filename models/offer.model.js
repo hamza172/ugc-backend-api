@@ -27,7 +27,7 @@ Offer.init(
       type: DataTypes.BOOLEAN,
     },
     deliveryTime: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       allowNull: false,
     },
     expiryDate: {
