@@ -16,6 +16,7 @@ const logger = require('morgan')
 const socket = require("socket.io");
 const http = require("http");
 const { messageService, userService, chatService, notificationService } = require("./services");
+const { updateOfferById } = require("./services/offers.service");
 require('./scheduled')
 const swaggerDefinition = {
   openapi: "3.0.0",
@@ -97,6 +98,10 @@ app.post('/upload-progress', (req, res) => {
       });
 
       socket.on("sendoffer", async (message) => {
+        const newMessage = await messageService.createMessage(message);
+        let updatedOffer = await updateOfferById(message.offerId, {
+          messageId: newMessage.id
+        })
         io.emit("message", message);
       });
 
