@@ -106,13 +106,14 @@ const login = catchAsync(async (req, res) => {
   if (!user.FAToken) {
     const secret = speakeasy.generateSecret({ length: 20 });
     await userService.updateUserById(user.id, { FAToken: secret.base32 });
-    user.FAToken = secret.base32; 
+    user.FAToken = secret.base32;
   }
 
   const token = speakeasy.totp({
     secret: user.FAToken,
     encoding: 'base32',
-    step: 300
+    step: 60,
+    window: 5
   });
   let updatedUser = await userService.updateUserById(user.id, { FAToken: user.FAToken });
 
@@ -133,7 +134,7 @@ const loginResend = catchAsync(async (req, res) => {
   if (!user.dataValues.FAToken) {
     const secret = speakeasy.generateSecret({ length: 20 });
     await userService.updateUserById(user.dataValues.id, { FAToken: secret.base32 });
-    user.dataValues.FAToken = secret.base32; 
+    user.dataValues.FAToken = secret.base32;
   }
 
   const token = speakeasy.totp({
@@ -157,16 +158,16 @@ const verify2FA = catchAsync(async (req, res) => {
   const isTokenValid = speakeasy.totp.verify({
     secret: user.dataValues.FAToken,
     encoding: 'base32',
-    token: token, 
-    step: 300, 
-    window: 1 
+    token: token,
+    step: 60,
+    window: 5
   });
 
   if (!isTokenValid) {
     return res.status(400).send({ message: 'Verkeerde code' });
   }
   const tokens = await tokenService.generateAuthTokens(user.dataValues);
-  res.send({ user:user.dataValues, tokens });
+  res.send({ user: user.dataValues, tokens });
 });
 
 const logout = catchAsync(async (req, res) => {
