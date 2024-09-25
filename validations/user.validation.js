@@ -10,7 +10,7 @@ const createUser = {
     firstName: Joi.string().required(),
     lastName: Joi.string().required(),
     companyName: Joi.string(),
-    ccn: Joi.string(),
+    ccn: Joi.string().allow(null, ''),
     btwNumber: Joi.string().allow(null, ''),
     dayOfBirth: Joi.string(),
     gender: Joi.string(),
