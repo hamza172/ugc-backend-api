@@ -19,6 +19,10 @@ router
 
 router
   .route("/:orderId")
-  .get(validate(activityValidation.getActivityByOrderId), activityController.getActivityByOrderId);
+  .get(validate(activityValidation.getActivityByOrderId), activityController.getActivityByOrderId)
+  .patch(validate(activityValidation.updateActivity), activityController.updateActivityById);
 
+router
+.route('/:orderId/:userId')
+.get(activityController.getActivityCount)
 module.exports = router;

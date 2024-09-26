@@ -83,7 +83,26 @@ const getActivityByOrderId = catchAsync(async (req, res) => {
 });
 
 
+const updateActivityById = catchAsync(async (req, res) => {
+  const activity = await activityService.updateActivity(
+    req.params.orderId,
+    req.body
+  );
+  res.send(activity);
+});
+
+const getActivityCount = catchAsync(async (req, res) => {
+  const activity = await activityService.getActivityCountForOrderId(
+    req.params.orderId,
+    req.params.userId
+  );
+  res.send(activity);
+});
+
+
 module.exports = {
   createActivity,
-  getActivityByOrderId
+  updateActivityById,
+  getActivityByOrderId,
+  getActivityCount
 };

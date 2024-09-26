@@ -4,7 +4,8 @@ const Order = require("../models/order.model");
 const paginate = require("../utils/paginate");
 const Package = require("../models/package.model");
 const { User, Offer } = require("../models");
-const  Activity  = require("../models/activity.model");
+const Activity = require("../models/activity.model");
+const { Op } = require("sequelize");
 
 /**
  * Create a activity
@@ -31,8 +32,42 @@ const getActivityByOrderId = async (orderId) => {
   return activity;
 };
 
+const getActivityCountForOrderId = async (orderId, userId) => {
+  const activity = await Activity.count({
+    where: {
+      orderId: orderId,
+      userId: { [Op.ne]: userId },  
+      seen: false 
+    },
+  });
+  return { count: activity };
+};
+
+
+
+/**
+ * Update an activity by id
+ * @param {ObjectId} activityId
+ * @param {Object} updateBody
+ * @returns {Promise<Activity>}
+ */
+const updateActivity = async (activityId, updateBody) => {
+  const activity = await Activity.findOne({
+    where: { activityId }
+  });
+  if (!activity) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Activity not found");
+  }
+
+  Object.assign(activity, updateBody);
+  await activity.save();
+
+  return activity;
+};
 
 module.exports = {
   createActivity,
   getActivityByOrderId,
+  updateActivity,
+  getActivityCountForOrderId
 };
