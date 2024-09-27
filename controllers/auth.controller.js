@@ -140,7 +140,8 @@ const loginResend = catchAsync(async (req, res) => {
   const token = speakeasy.totp({
     secret: user.dataValues.FAToken,
     encoding: 'base32',
-    step: 300
+    step: 60,
+    window: 5
   });
   let updatedUser = await userService.updateUserById(user.dataValues.id, { FAToken: user.dataValues.FAToken });
 
