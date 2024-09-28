@@ -113,7 +113,7 @@ const login = catchAsync(async (req, res) => {
     secret: user.FAToken,
     encoding: 'base32',
     step: 60,
-    window: 5
+    window: 2,
   });
   let updatedUser = await userService.updateUserById(user.id, { FAToken: user.FAToken });
 
@@ -141,7 +141,7 @@ const loginResend = catchAsync(async (req, res) => {
     secret: user.dataValues.FAToken,
     encoding: 'base32',
     step: 60,
-    window: 5
+    window: 2,
   });
   let updatedUser = await userService.updateUserById(user.dataValues.id, { FAToken: user.dataValues.FAToken });
 
@@ -161,7 +161,7 @@ const verify2FA = catchAsync(async (req, res) => {
     encoding: 'base32',
     token: token,
     step: 60,
-    window: 5
+    window: 2,
   });
 
   if (!isTokenValid) {

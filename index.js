@@ -90,7 +90,9 @@ app.post('/upload-progress', (req, res) => {
         const notifications = await notificationService.getNotificationsByUserId(userId);
         socket.emit('notifications', notifications)
       });
-
+      socket.on('sendFile', async (message) => {
+        io.emit("message", message);
+      })
 
       socket.on("sendMessage", async (message) => {
         const newMessage = await messageService.createMessage(message);
