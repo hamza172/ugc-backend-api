@@ -7,6 +7,7 @@ const createNotification = {
     title: Joi.string().required(),
     text: Joi.string().allow(null || ''),
     orderId: Joi.number().allow(null || ''),
+    creatorId: Joi.number().allow(null || ''),
   }),
 };
 

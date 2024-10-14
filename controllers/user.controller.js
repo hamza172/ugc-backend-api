@@ -10,6 +10,7 @@ const Review = require("../models/review.model");
 const Order = require("../models/order.model");
 const { getCoordinates, getDistance } = require('../middlewares/google');
 const { sendUserDeleteEmail } = require("../services/email.service");
+const Package = require("../models/package.model");
 
 const createUser = catchAsync(async (req, res) => {
   const user = await userService.createUser(req.body);
@@ -59,10 +60,9 @@ const getUsers = catchAsync(async (req, res) => {
       },
     }),
   };
-
   if (req.query.price) {
     const priceFilters = {
-      "50-100": { [Op.between]: [50, 100] },
+      "50-100": { [Op.between]: [59, 100] },
       "100-200": { [Op.between]: [100, 200] },
       "200+": { [Op.gte]: 200 },
     };
@@ -136,6 +136,12 @@ const getUsers = catchAsync(async (req, res) => {
         model: Order,
         attributes: [],
         required: false,
+      },
+      {
+        model: Package,
+        attributes: [],
+        as: 'packages',
+        required: true,
       },
     ],
     attributes: {

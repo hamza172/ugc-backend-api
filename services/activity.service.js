@@ -52,6 +52,7 @@ const getActivityCountForOrderId = async (orderId, userId) => {
  * @returns {Promise<Activity>}
  */
 const updateActivity = async (activityId, updateBody) => {
+  console.log("DAta: ",activityId, updateBody)
   const activity = await Activity.findOne({
     where: { activityId }
   });

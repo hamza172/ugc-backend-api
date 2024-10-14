@@ -17,6 +17,10 @@ Notifications.init(
             type: DataTypes.STRING,
             allowNull: true,
         },
+        creatorId: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
     },
     {
         sequelize,

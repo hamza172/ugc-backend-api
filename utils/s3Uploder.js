@@ -54,4 +54,3 @@ const fileUpload = async (file, onProgress) => {
 };
 
 module.exports = fileUpload;
-module.exports = fileUpload;

@@ -81,9 +81,13 @@ const send2factorAuthenticationToken = async (to, token, firstName) => {
     return email;
 };
 
+const sendResetPasswordEmail = async (to, token, firstName) => {
+   
+};
+
 module.exports = {
     // sendVerificationEmailBuyer,
-    // sendResetPasswordEmail,
+    sendResetPasswordEmail,
     sendBuyerRegistrationConfirmationEmail,
     sendCreatorRegistrationConfirmationEmail,
     send2factorAuthenticationToken,

@@ -153,15 +153,15 @@ User.init(
     },
     lastSeenSettings: {
       type: DataTypes.BOOLEAN,
-      defaultValue: false,
+      defaultValue: true,
     },
     onlineSettings: {
       type: DataTypes.BOOLEAN,
-      defaultValue: false,
+      defaultValue: true,
     },
     pushNotificationSettings: {
       type: DataTypes.BOOLEAN,
-      defaultValue: false,
+      defaultValue: true,
     },
     blueVerified: {
       type: DataTypes.BOOLEAN,

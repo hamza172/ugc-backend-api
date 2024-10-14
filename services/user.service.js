@@ -58,9 +58,9 @@ const queryUsers = async (filters, options) => {
   const { page, limit, sortBy } = options;
 
   const users = await User.findAndCountAll({
-
     where: {
       ...filters,
+      availability: true,
       email: {
         [Op.ne]: '',
         [Op.not]: null,
@@ -68,8 +68,13 @@ const queryUsers = async (filters, options) => {
     },
     ...paginate({ page, pageSize: limit }),
     order: [["createdAt", sortBy ? sortBy : "DESC"]],
-    include: [Package, Review],
+    include: [{
+      model: Package,
+      as: 'packages',
+      required: false
+    }, Review],
   });
+
   return {
     data: users.rows,
     meta: {
@@ -220,7 +225,7 @@ const updateUserRankById = async (userId) => {
   } else if (successfulOrdersCount >= 5 && averageRating >= 3.5) {
     newRank = '1';
   }
-  console.log('RANKS: ',user.dataValues.rank, newRank)
+  console.log('RANKS: ', user.dataValues.rank, newRank)
   // Update the user's rank if it has changed
   if (user.dataValues.rank !== newRank) {
     console.log('newRank', newRank)

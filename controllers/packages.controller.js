@@ -3,8 +3,19 @@ const pick = require("../utils/pick");
 const ApiError = require("../utils/ApiError");
 const catchAsync = require("../utils/catchAsync");
 const { packageService } = require("../services");
+const Package = require("../models/package.model");
 
 const createPackage = catchAsync(async (req, res) => {
+  console.log("asd: ", req.body)
+  const existingPackage = await Package.findOne({ where: { userId: req.body.userId, name: req.body.name } });
+
+  console.log('existing', existingPackage)
+
+  if (existingPackage) {
+    return res.status(httpStatus.CONFLICT).json({ message: 'A package with the same userId and name already exists' });
+  }
+
+
   const package = await packageService.createPackage(req.body);
   res.status(httpStatus.CREATED).send(package);
 });

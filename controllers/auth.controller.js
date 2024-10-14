@@ -118,6 +118,7 @@ const login = catchAsync(async (req, res) => {
   let updatedUser = await userService.updateUserById(user.id, { FAToken: user.FAToken });
 
   let emailSend = await send2factorAuthenticationToken(email, token, user.firstName)
+  console.log("emailSend: ",emailSend)
 
   res.send({ message: '2FA token sent to your email. Please verify to continue.', userId: user.id });
 
