@@ -81,8 +81,21 @@ const send2factorAuthenticationToken = async (to, token, firstName) => {
     return email;
 };
 
-const sendResetPasswordEmail = async (to, token, firstName) => {
-   
+const sendResetPasswordEmail = async (to, token) => {
+    const html = fs.readFileSync(
+        path.join(__dirname, "../reset-pass-email.html"),
+        "utf8"
+    );
+    const msg = {
+        to,
+        from: "no-reply@ugc.nl",
+        subject: "Wachtwoord opnieuw instellen | UGC.nl",
+        html: html.replaceAll('{token}', token)
+    };
+
+    const email = await sendGrid.send(msg);
+
+    return email;
 };
 
 module.exports = {
